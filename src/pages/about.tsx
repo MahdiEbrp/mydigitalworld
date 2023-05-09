@@ -23,7 +23,7 @@ const About: NextPage = () => {
                     <CardTitle title='About Me' />
                     <CardContent>
                         <div className='flex flex-col'>
-                            <ImageLoader className='rounded' src={'/images/mahdi.jpg'} alt={'Mahdi Ebrahim pour'} width={400} height={400} />
+                            <ImageLoader className='rounded' src={'/images/mahdi.jpg'} alt='Mahdi Ebrahim pour' width={400} height={400} />
                             <div className='flex justify-center items-center mt-2 gap-1'>
                                 <CircleButton>
                                     <FaArrowLeft />
