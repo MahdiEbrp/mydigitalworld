@@ -1,0 +1,105 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    ---primary100: #c2b396;
+    ---primary200: #d7c4a9;
+    ---primary300: #f5deb3;
+    ---primary400: #ffebcb;
+    ---primary500: #fff0d7;
+    ---primary700: #f0ba7e;
+    ---primary800: #fdba74;
+    ---primary900: #ffaf5c;
+    ---primary950: #ffb465;
+    ---primary-text800: #4b5563;
+    ---primary-text900:#363535;
+    ---primary-text950: #505050;
+    ---paper-text: black;
+    ---link-text: #3944af;
+    ---particle-color: #718096;
+  }
+  .dark {
+    ---primary100: #1e1f22;
+    ---primary200: #313338;
+    ---primary300: #2b2d31;
+    ---primary400: #505765;
+    ---primary500: #3d434e;
+    ---primary700: #272c33;
+    ---primary800: #282c34;
+    ---primary900: #262a31;
+    ---primary950: #20232a;
+    ---primary-text800: #abb7c8;
+    ---primary-text900:#e2e8f0;
+    ---primary-text950: #cfd9e8;
+    ---paper-text: white;
+    ---link-text: #7a9bf9;
+    ---particle-color: #cbd5e0;
+  }
+}
+
+html,
+body,
+#__next {
+  padding: 0;
+  margin: 0;
+  font-family: Vazirmatn, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
+    Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  min-height: 100vh;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+* {
+  box-sizing: border-box;
+  text-transform: none !important;
+}
+
+body {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+@keyframes enter-left {
+  to {
+    font-size: medium;
+    opacity: 1;
+    margin-left: 0;
+  }
+}
+
+@keyframes exit-left {
+  to {
+    font-size: 0;
+    padding: 0;
+  }
+}
+.animation-enter-top {
+  opacity: 0;
+  transform: translateY(-100%);
+  animation: enter-top 0.5s ease-in-out forwards;
+  margin-top: -100%;
+}
+
+.animation-exit-top {
+  opacity: 0;
+  transform: translateY(0);
+  animation: exit-top 0.5s ease-in-out forwards;
+  margin-top: 0;
+}
+
+.animation-enter-left {
+  animation: enter-left 0.5s ease-in-out forwards;
+  font-size: 0;
+  margin-left: -10px;
+}
+
+.animation-exit-left {
+  animation: exit-left 0.5s ease-in-out forwards;
+}
