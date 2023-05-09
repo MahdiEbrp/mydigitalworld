@@ -53,14 +53,6 @@ const Accordion = ({ children }: AccordionProps) => {
         return `rounded-none ${borderBottomStyle}`;
     };
 
-    React.Children.forEach(children, (child) => {
-        if (!React.isValidElement(child) || child.type !== AccordionSection) {
-            // eslint-disable-next-line no-console
-            console.error('The Accordion component only accepts AccordionSection components as children.');
-            return <></>;
-        }
-    });
-
     return (
         <div className='flex flex-col items-center'>
             {React.Children.map(children, (child, index) =>
