@@ -17,7 +17,7 @@ const MarginedParagraph = ({ children }: { children: ReactElement | string; }) =
 const MAX_STEP = 3;
 const About: NextPage = () => {
 
-    const [activeId, setActiveId ] = useState(0);
+    const [activeId, setActiveId] = useState(0);
     const nextStep = () => {
         if (activeId !== MAX_STEP - 1)
             setActiveId(activeId + 1);
@@ -36,17 +36,17 @@ const About: NextPage = () => {
                         <div className='flex flex-col'>
                             <ImageLoader className='rounded' src={'/images/mahdi.jpg'} alt='Mahdi Ebrahim pour' width={400} height={400} />
                             <div className='flex justify-center items-center mt-2 gap-1'>
-                                <CircleButton disabled={activeId===0} onClick={previousStep}>
+                                <CircleButton disabled={activeId === 0} onClick={previousStep}>
                                     <FaArrowLeft />
                                 </CircleButton>
-                                <p>Page {activeId+1} of {MAX_STEP}</p>
-                                <CircleButton disabled={activeId === MAX_STEP-1} onClick={nextStep}>
+                                <p>Page {activeId + 1} of {MAX_STEP}</p>
+                                <CircleButton disabled={activeId === MAX_STEP - 1} onClick={nextStep}>
                                     <FaArrowRight />
                                 </CircleButton>
                             </div>
                         </div>
                         <TabGroup activeId={activeId.toString()}>
-                            <Tab id='0'>
+                            <Tab id='0' >
                                 <MarginedParagraph>
                                     <>
                                         Hey there! My name is <strong className='font-bold'>Mahdi Ebrahim Pour</strong>, and it&apos;s great to meet you! I&apos;m a {myAge} old, who was born on March 8th, 1991. As a kid, I had dreams of becoming a road and construction engineer, but my life took a different turn when my mother enrolled me in computer software classes. And I must say, it turned out to be the best thing that ever happened to me! Since then, technology has been my passion, and programming feels like solving a puzzle to me. I hope to make money from it someday.

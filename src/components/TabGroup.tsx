@@ -18,17 +18,17 @@ const Tab: React.FC<TabProps> = ({ id, children, ...rest }) => {
     );
 };
 
-const TabGroup: React.FC<TabGroupProps> = ({ activeId, children, ...rest }) => {
+const TabGroup: React.FC<TabGroupProps> = ({ activeId, children, className, ...rest }) => {
 
     return (
-        <div className='flex flex-col' {...rest}>
+        <div className={`flex flex-col ${className || ''}`} {...rest}>
             {children.map((child) => {
-                    const tab = child as ReactElement<TabProps>;
-                    return (
-                        <div key={tab.props.id} className={`${activeId === tab.props.id ? 'block' : 'hidden'}`}>
-                            {tab.props.children}
-                        </div>
-                    );
+                const tab = child as ReactElement<TabProps>;
+                return (
+                    <div key={tab.props.id} className={`${activeId === tab.props.id ? 'block' : 'hidden'} ${tab.props.className || ''}`}>
+                        {tab.props.children}
+                    </div>
+                );
             })}
         </div>
     );

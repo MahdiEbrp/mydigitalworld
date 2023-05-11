@@ -14,7 +14,7 @@
     ---primary900: #ffaf5c;
     ---primary950: #ffb465;
     ---primary-text800: #4b5563;
-    ---primary-text900:#363535;
+    ---primary-text900: #363535;
     ---primary-text950: #505050;
     ---paper-text: black;
     ---link-text: #3944af;
@@ -31,7 +31,7 @@
     ---primary900: #262a31;
     ---primary950: #20232a;
     ---primary-text800: #abb7c8;
-    ---primary-text900:#e2e8f0;
+    ---primary-text900: #e2e8f0;
     ---primary-text950: #cfd9e8;
     ---paper-text: white;
     ---link-text: #7a9bf9;
@@ -64,42 +64,4 @@ a {
 body {
   padding: 0 !important;
   margin: 0 !important;
-}
-
-@keyframes enter-left {
-  to {
-    font-size: medium;
-    opacity: 1;
-    margin-left: 0;
-  }
-}
-
-@keyframes exit-left {
-  to {
-    font-size: 0;
-    padding: 0;
-  }
-}
-.animation-enter-top {
-  opacity: 0;
-  transform: translateY(-100%);
-  animation: enter-top 0.5s ease-in-out forwards;
-  margin-top: -100%;
-}
-
-.animation-exit-top {
-  opacity: 0;
-  transform: translateY(0);
-  animation: exit-top 0.5s ease-in-out forwards;
-  margin-top: 0;
-}
-
-.animation-enter-left {
-  animation: enter-left 0.5s ease-in-out forwards;
-  font-size: 0;
-  margin-left: -10px;
-}
-
-.animation-exit-left {
-  animation: exit-left 0.5s ease-in-out forwards;
 }

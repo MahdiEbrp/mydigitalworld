@@ -1,91 +1,47 @@
-import React, { useRef, ReactNode, useEffect, useLayoutEffect } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 
 type AnimationType = 'none' | 'expandTop' | 'collapseTop' | 'expandLeft' | 'collapseLeft';
-type Props = {
+
+type AnimationProps = {
     children: ReactNode;
     animation: AnimationType;
     className?: string;
-    duration?: number;
+    delay?: number;
 };
 
-const CAN_USE_DOM = Boolean(typeof window !== 'undefined' && window.document && window.document.createElement);
-
-const useIsomorphicLayoutEffect = CAN_USE_DOM ? useLayoutEffect : useEffect;
-
-const AnimatedDiv = ({ children, animation, className, duration = 300 }: Props) => {
-    const mainDiv = useRef<HTMLDivElement>(null);
-
-    useIsomorphicLayoutEffect(() => {
-        if (!mainDiv.current) return;
-
-        switch (animation) {
-            case 'expandLeft':
-                mainDiv.current.style.maxWidth = '0';
-                mainDiv.current.style.maxHeight = '';
-                mainDiv.current.style.transition = `all ${duration}ms`;
-                setTimeout(() => {
-                    if (mainDiv.current) {
-                        mainDiv.current.style.maxWidth = '100vw';
-                    }
-                }, 0);
-                break;
-            case 'collapseLeft':
-                if (mainDiv.current) {
-                    mainDiv.current.style.transition = `all ${duration}ms`;
-                    mainDiv.current.style.maxWidth = '0';
-                    setTimeout(() => {
-                        if (mainDiv.current) {
-                            setTimeout(() => {
-                                if (mainDiv.current) {
-                                    mainDiv.current.style.maxHeight = '0';
-                                    mainDiv.current.style.transition = '';
-                                }
-                            }, duration);
-                        }
-                    }, 0);
-                }
-                break;
-            case 'expandTop':
-                mainDiv.current.style.maxHeight = '0';
-                mainDiv.current.style.transition = `all ${duration}ms`;
-                setTimeout(() => {
-                    if (mainDiv.current) {
-                        mainDiv.current.style.maxHeight = '100vh';
-                    }
-                }, 0);
-                break;
-            case 'collapseTop':
-                if (mainDiv.current) {
-                    mainDiv.current.style.maxHeight = '100vh';
-                    setTimeout(() => {
-                        if (mainDiv.current) {
-                            mainDiv.current.style.maxHeight = '0';
-                            mainDiv.current.style.transition = `all ${duration}ms`;
-                            setTimeout(() => {
-                                if (mainDiv.current) {
-                                    mainDiv.current.style.width = '0';
-                                    mainDiv.current.style.height = '0';
-                                    mainDiv.current.style.transition = '';
-                                }
-                            }, duration);
-                        }
-                    }, 0);
-                }
-                break;
-            default: // 'none'
-                mainDiv.current.style.maxHeight = '';
-                mainDiv.current.style.maxWidth = '';
-                mainDiv.current.style.transition = '';
-                break;
-        }
-
-    }, [animation, duration]);
-
-    return (
-        <div ref={mainDiv} className={className} style={{ overflow: 'hidden' }}>
-            {children}
-        </div>
-    );
+const getAnimationStyle = (animation: AnimationType, isAnimationDone: boolean) => {
+    switch (animation) {
+        case 'collapseLeft':
+            return isAnimationDone ? 'max-h-0 max-w-0' : 'max-h-5 max-w-screen';
+        case 'expandLeft':
+            return isAnimationDone ? 'max-h-screen max-w-screen' : 'max-h-0 max-w-0';
+        case 'expandTop':
+            return isAnimationDone ? 'max-h-screen' : 'max-h-0';
+        case 'collapseTop':
+            return isAnimationDone ? 'max-h-0 max-w-screen' : 'max-h-screen';
+        default:
+            return '';
+    }
 };
 
-export default AnimatedDiv;
+const ANIMATION_DURATION = 2000;
+let prevAnimation = '';
+
+const AnimatedContainer = ({ children, animation, className = '', delay = 0 }: AnimationProps) => {
+    const baseStyle = `overflow-hidden transition-all duration-${ANIMATION_DURATION}ms`;
+    const isAnimationDone = prevAnimation === animation;
+    const [style, setStyle] = useState(`${baseStyle} ${getAnimationStyle(animation, isAnimationDone)}`);
+
+    useEffect(() => {
+        if (isAnimationDone) return;
+        const timeoutId = setTimeout(() => {
+            setStyle(`${baseStyle} ${getAnimationStyle(animation, true)}`);
+            prevAnimation = animation;
+        }, delay);
+        return () => clearTimeout(timeoutId);
+    }, [animation, baseStyle, delay, isAnimationDone]);
+
+    return <div className={`${className} ${style}`}>{children}</div>;
+};
+
+export default AnimatedContainer;
