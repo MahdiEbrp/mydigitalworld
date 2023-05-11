@@ -45,7 +45,7 @@ const About: NextPage = () => {
                                 </CircleButton>
                             </div>
                         </div>
-                        <TabGroup activeId={activeId.toString()}>
+                        <TabGroup activeId={activeId.toString()} useFadeIn>
                             <Tab id='0' >
                                 <MarginedParagraph>
                                     <>

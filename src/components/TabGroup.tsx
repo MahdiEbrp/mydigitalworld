@@ -8,6 +8,7 @@ type TabProps = {
 type TabGroupProps = {
     activeId: string;
     children: ReactElement<TabProps>[];
+    useFadeIn?:boolean
 } & React.HTMLAttributes<HTMLDivElement>;
 
 const Tab: React.FC<TabProps> = ({ id, children, ...rest }) => {
@@ -18,14 +19,14 @@ const Tab: React.FC<TabProps> = ({ id, children, ...rest }) => {
     );
 };
 
-const TabGroup: React.FC<TabGroupProps> = ({ activeId, children, className, ...rest }) => {
+const TabGroup: React.FC<TabGroupProps> = ({ activeId, children, className, useFadeIn=false, ...rest }) => {
 
     return (
         <div className={`flex flex-col ${className || ''}`} {...rest}>
             {children.map((child) => {
                 const tab = child as ReactElement<TabProps>;
                 return (
-                    <div key={tab.props.id} className={`${activeId === tab.props.id ? 'block' : 'hidden'} ${tab.props.className || ''}`}>
+                    <div key={tab.props.id} className={`${useFadeIn? 'animate-fadeIn' :''} ${activeId === tab.props.id ? 'block' : 'hidden'} ${tab.props.className || ''}`}>
                         {tab.props.children}
                     </div>
                 );
