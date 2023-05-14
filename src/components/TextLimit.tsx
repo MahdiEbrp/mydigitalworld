@@ -41,7 +41,7 @@ const TextLimit: FC<TextLimitProps> = ({ maxWords, className = '', children }) =
 
     return (
         <div className={`${className} inline-flex`}>
-            <p className={`overflow-hidden ${isTransitioning ? 'max-h-0' : 'max-h-screen'} transition-all duration-300 text-ellipsis`}>
+            <p className={`overflow-hidden ${isTransitioning ? 'max-h-0' : 'max-h-screen'} transition-[max-height] duration-300 text-ellipsis`}>
                 {textToShow}
                 {linkToShow}
             </p>

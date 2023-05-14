@@ -10,7 +10,7 @@ export default function Home() {
             <Head>
                 <title>404 Not Found!</title>
             </Head>
-            <div className='flex justify-center items-center min-h-screen'>
+            <div className='flex animate-fadeIn justify-center items-center min-h-screen'>
                 <Card>
                     <CardTitle title='404 Not Found!' />
                     <ImageLoader width={640} height={640} src='\images\404.svg'

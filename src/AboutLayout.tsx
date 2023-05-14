@@ -37,7 +37,7 @@ const AboutLayout = (props: { children: ReactNode; }) => {
             <Head>
                 <title>About me</title>
             </Head>
-            <div className='flex min-h-screen'>
+            <div className='flex animate-fadeIn min-h-screen'>
                 <Sidebar sidebarItems={sidebarItems} sidebarTitle='About Me' />
                 <div className='flex-auto flex flex-col sm:flex-row justify-center items-center sm:flex-wrap'>
                     {children}
