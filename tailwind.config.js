@@ -21,7 +21,7 @@ module.exports = {
         },
       },
       animation: {
-        "fadeIn": "fadeIn 1s cubic-bezier(0.4, 0, 0.6, 1)",
+        fadeIn: "fadeIn 1s cubic-bezier(0.4, 0, 0.6, 1)",
       },
       backgroundColor: {
         primary: {
@@ -32,6 +32,7 @@ module.exports = {
           500: "var(---primary500)",
           700: "var(---primary700)",
           800: "var(---primary800)",
+          900: "var(---primary900)",
           950: "var(---primary950)",
         },
       },
@@ -58,6 +59,7 @@ module.exports = {
           200: "var(---primary200)",
           300: "var(---primary300)",
           400: "var(---primary400)",
+          500: "var(---primary500)",
           700: "var(---primary700)",
           800: "var(---primary800)",
         },
@@ -69,6 +71,9 @@ module.exports = {
         },
         link: "var(---link-text)",
         particle: "var(---particle-color)",
+      },
+      screens: {
+        print: { raw: "print" },
       },
     },
   },

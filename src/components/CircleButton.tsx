@@ -8,7 +8,7 @@ type CircleButtonProps = {
 const CircleButton: React.FC<CircleButtonProps> = ({ children, ...rest }) => {
     return (
         <button
-            className='flex justify-center items-center w-8 h-8 m-1 disabled:opacity-25 rounded-full bg-primaryBackground-800 hover:bg-primaryBackground-700 text-primary-800 transition-opacity'
+            className='flex justify-center outline-none focus-within:animate-pulse focus:animate-pulse print:hidden items-center w-8 h-8 m-1 disabled:opacity-25 rounded-full bg-primaryBackground-800 hover:bg-primaryBackground-700 text-primary-800 transition-opacity'
             {...rest}
         >
             {React.cloneElement(children)}

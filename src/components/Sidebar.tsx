@@ -46,7 +46,7 @@ const Sidebar = ({ sidebarTitle = 'Sidebar', sidebarItems = [] }: { sidebarTitle
     };
 
     return (
-        <div className='sticky'>
+        <div className='sticky print:hidden'>
 
             <aside className={`${showMenu ? 'fixed' : 'sticky'} w-1/2 h-[max(100%,100vh)]`}>
                 <div className='flex flex-col items-center shadow-lg p-3 bg-primary-700 min-h-full w-fit max-w-fit z-40' >
