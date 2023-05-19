@@ -1,10 +1,14 @@
-import { ReactElement } from 'react';
+import { HTMLAttributes, ReactElement } from 'react';
 
-export const Card = ({ children }: { children?: ReactElement | ReactElement[]; } = {}) => {
+export type CardProps = {
+    children?: ReactElement | ReactElement[];
+} & HTMLAttributes<HTMLDivElement>;
+
+export const Card = ({ children,...rest }: CardProps) => {
     const maxWidthClassName = 'max-w-2xl';
-
+    const { className } = {...rest};
     return (
-        <div className={`bg-primary-500 gap-1 shadow-md rounded-lg m-2 p-6 ${maxWidthClassName}`}>
+        <div {...rest} className={`bg-primary-500 gap-1 shadow-md rounded-lg m-2 p-6 ${maxWidthClassName} ${className ? className : ''}`}>
             {children}
         </div>
     );

@@ -8,11 +8,16 @@ import { BsImages } from 'react-icons/bs';
 import { IconType } from 'react-icons/lib';
 import Animation from './Animation';
 import { CookieManager } from '@/lib/cookieManager';
+import { IoMdLogIn, IoMdPerson } from 'react-icons/io';
+import { useSession } from 'next-auth/react';
+import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 
 const Navbar = () => {
     const { theme, setTheme } = useContext(ThemeContext);
 
     const [showMenu, setShowMenu] = useState(false);
+    const { data, status } = useSession();
+
 
     const toggleMenu = () => setShowMenu(prevState => !prevState);
 
@@ -68,7 +73,7 @@ const Navbar = () => {
         return (
 
             <Animation className='sm:!block sm:!max-h-[initial] sm:!h-auto sm:!w-auto' animation={`${showMenu ? 'expandTop' : 'collapseTop'}`}>
-                <div className={'flex flex-col sm:translate-x-0 sm:flex-row sm:animate-none items-center space-x-1'}>
+                <div className={'flex flex-col gap-2 sm:translate-x-0 sm:flex-row sm:animate-none items-center space-x-1'}>
                     {children}
                 </div>
             </Animation>
@@ -97,6 +102,25 @@ const Navbar = () => {
             </button>
         );
     };
+    const LoginButton = () => {
+        return (
+            <button
+                type='button'
+                className='inline-flex items-center justify-center rounded-md text-primary-800 hover:animate-pulse active:-rotate-180 focus:outline-none transition duration-500 ease-in-out'
+            >
+                <>
+                    {status === 'loading' ?
+                        <AiOutlineLoading3Quarters className='text-4xl h-8 w-8 text-primary-800 opacity-70 animate-spin' />
+                        :
+                        <>
+                            {data ? <IoMdPerson className='h-8 w-8' /> : <IoMdLogIn className='h-8 w-8' />}
+                        </>
+                    }
+                </>
+
+            </button>
+        );
+    };
     return (
         <NavContainer>
             <div className='flex items-center'>
@@ -111,6 +135,7 @@ const Navbar = () => {
             </ResponsiveContainer>
             <ResponsiveContainer>
                 <SwitchThemeButton />
+                <LoginButton />
             </ResponsiveContainer>
         </NavContainer>
 

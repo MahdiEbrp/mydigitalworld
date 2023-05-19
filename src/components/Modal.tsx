@@ -1,0 +1,74 @@
+import React, { ReactNode, useEffect, useState } from 'react';
+import Button from './Button';
+import Card, { CardContent } from './Card';
+
+type ModalProps = {
+    isOpen: boolean;
+    title: string;
+    onClose: () => void;
+    children: ReactNode;
+};
+
+const MODAL_TRANSITION_DURATION = 500;
+
+const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
+    const [isModalOpen, setIsModalOpen] = useState(isOpen);
+    const [isHidden, setIsHidden] = useState(false);
+
+    const handleClose = () => {
+        setIsModalOpen(false);
+        onClose();
+    };
+
+    useEffect(() => {
+
+        if (!isHidden) {
+            const timeoutId = setTimeout(() => {
+                if (!isModalOpen) {
+                    setIsHidden(true);
+                }
+            }, MODAL_TRANSITION_DURATION);
+            return () => clearTimeout(timeoutId);
+        }
+
+    }, [isHidden, isModalOpen]);
+
+    return (
+        <div
+            className={`fixed z-10 inset-0 overflow-y-auto ${isHidden ? 'hidden' : ''
+                } ${isModalOpen ? 'opacity-100' : 'opacity-0'} transition-opacity`}
+            style={{ transitionDuration: `${MODAL_TRANSITION_DURATION}ms` }}
+        >
+            <div className='flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0'>
+                <div className='fixed inset-0 transition-opacity' aria-hidden='true' onClick={handleClose}>
+                    <div className='absolute inset-0 bg-black opacity-75'></div>
+                </div>
+
+                <span className='hidden sm:inline-block sm:align-middle sm:h-screen' aria-hidden='true'></span>
+
+                <Card
+                    className='inline-block align-bottom rounded-lg px-4 pt-5 pb-4 text-center overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6'
+                    role='dialog'
+                    aria-modal='true'
+                    aria-labelledby='modal-headline'
+                >
+                    <div>
+                        <CardContent>
+                            <div className='mt-3 text-center sm:mt-5'>
+                                <h3 className='text-lg leading-6 font-medium text-paper' id='modal-headline'>
+                                    {title}
+                                </h3>
+                                <div className='mt-2'>{children}</div>
+                            </div>
+                        </CardContent>
+                    </div>
+                    <div className='inline-flex mt-5 sm:mt-6'>
+                        <Button onClick={handleClose}>Close</Button>
+                    </div>
+                </Card>
+            </div>
+        </div>
+    );
+};
+
+export default Modal;
