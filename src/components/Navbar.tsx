@@ -11,15 +11,17 @@ import { CookieManager } from '@/lib/cookieManager';
 import { IoMdLogIn, IoMdPerson } from 'react-icons/io';
 import { useSession } from 'next-auth/react';
 import { AiOutlineLoading3Quarters } from 'react-icons/ai';
+import { SignInModalContext } from './context/SignInContext';
 
 const Navbar = () => {
     const { theme, setTheme } = useContext(ThemeContext);
 
     const [showMenu, setShowMenu] = useState(false);
+    const { isModalVisible, setModalVisibility } = useContext(SignInModalContext);
     const { data, status } = useSession();
 
-
     const toggleMenu = () => setShowMenu(prevState => !prevState);
+    const toggleModal = () => setModalVisibility(!isModalVisible);
 
     const toggleTheme = () => {
         if (theme === 'dark') {
@@ -105,6 +107,7 @@ const Navbar = () => {
     const LoginButton = () => {
         return (
             <button
+                onClick={toggleModal}
                 type='button'
                 className='inline-flex items-center justify-center rounded-md text-primary-800 hover:animate-pulse active:-rotate-180 focus:outline-none transition duration-500 ease-in-out'
             >

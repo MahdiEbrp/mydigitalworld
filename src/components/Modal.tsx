@@ -19,9 +19,13 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
         setIsModalOpen(false);
         onClose();
     };
-
     useEffect(() => {
-
+        if (isOpen !== isModalOpen)
+        {
+            setIsModalOpen(isOpen);
+            setIsHidden(false);
+            return;
+        }
         if (!isHidden) {
             const timeoutId = setTimeout(() => {
                 if (!isModalOpen) {
@@ -31,7 +35,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
             return () => clearTimeout(timeoutId);
         }
 
-    }, [isHidden, isModalOpen]);
+    }, [isHidden, isModalOpen,isOpen]);
 
     return (
         <div
