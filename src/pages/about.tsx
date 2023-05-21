@@ -7,7 +7,6 @@ import { calculateAge } from '@/lib/dateUtility';
 import { NextPage } from 'next';
 import React, { ReactElement, useState } from 'react';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
-import Link from 'next/link';
 const myAge = calculateAge(new Date('1991-03-08'));
 
 const MarginedParagraph = ({ children }: { children: ReactElement | string; }) => {
@@ -64,9 +63,6 @@ const About: NextPage = () => {
                                 </MarginedParagraph>
                             </Tab>
                         </TabGroup>
-                        <Link href='/auth/signin'>
-                            Login
-                        </Link>
                     </CardContent>
                 </Card>
             </div>

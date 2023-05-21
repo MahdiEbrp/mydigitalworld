@@ -37,7 +37,7 @@ const Navbar = () => {
         const { children } = props;
         return (
             <>
-                <nav className='sticky print:hidden top-0 z-30 w-full sm:max-h-20 shadow-lg p-3 bg-primary-800'>
+                <nav className='sticky print:hidden top-0 z-10 w-full sm:max-h-20 shadow-lg p-3 bg-primary-800'>
                     <div className='max-w-6xl mx-auto px-4'>
                         <div className='flex justify-between flex-col sm:flex-row'>
                             {children}

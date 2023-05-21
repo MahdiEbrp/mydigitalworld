@@ -39,7 +39,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
 
     return (
         <div
-            className={`fixed z-10 inset-0 m-2 overflow-y-auto ${isHidden ? 'hidden' : ''
+            className={`fixed top-0 left-0 right-0 bottom-0 inset-0 z-50  overflow-y-auto ${isHidden ? 'hidden' : ''
                 } ${isModalOpen ? 'opacity-100' : 'opacity-0'} transition-opacity`}
             style={{ transitionDuration: `${MODAL_TRANSITION_DURATION}ms` }}
         >
