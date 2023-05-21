@@ -1,27 +1,26 @@
-import { ThemeContext } from '@/context/theme';
+import Animation from './Animation';
 import Link from 'next/link';
 import React, { ReactElement, useContext, useState } from 'react';
-import { FaBars, FaTimes } from 'react-icons/fa';
-import { HiOutlineMoon, HiOutlineSun } from 'react-icons/hi';
+import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 import { BiBookBookmark, BiHomeHeart, BiUser } from 'react-icons/bi';
 import { BsImages } from 'react-icons/bs';
-import { IconType } from 'react-icons/lib';
-import Animation from './Animation';
 import { CookieManager } from '@/lib/cookieManager';
+import { FaBars, FaTimes } from 'react-icons/fa';
+import { HiOutlineMoon, HiOutlineSun } from 'react-icons/hi';
+import { IconType } from 'react-icons/lib';
 import { IoMdLogIn, IoMdPerson } from 'react-icons/io';
-import { useSession } from 'next-auth/react';
-import { AiOutlineLoading3Quarters } from 'react-icons/ai';
-import { SignInModalContext } from './context/SignInContext';
+import { SignInModalContext } from '../context/SignInContext';
+import { ThemeContext } from '@/context/Theme';
+import { AuthContext } from '@/context/AuthContext';
 
 const Navbar = () => {
     const { theme, setTheme } = useContext(ThemeContext);
 
     const [showMenu, setShowMenu] = useState(false);
     const { isModalVisible, setModalVisibility } = useContext(SignInModalContext);
-    const { data, status } = useSession();
-
     const toggleMenu = () => setShowMenu(prevState => !prevState);
     const toggleModal = () => setModalVisibility(!isModalVisible);
+    const { isLoading, session } = useContext(AuthContext);
 
     const toggleTheme = () => {
         if (theme === 'dark') {
@@ -109,14 +108,15 @@ const Navbar = () => {
             <button
                 onClick={toggleModal}
                 type='button'
+                disabled={isLoading}
                 className='inline-flex items-center justify-center rounded-md text-primary-800 hover:animate-pulse active:-rotate-180 focus:outline-none transition duration-500 ease-in-out'
             >
                 <>
-                    {status === 'loading' ?
+                    {isLoading ?
                         <AiOutlineLoading3Quarters className='text-4xl h-8 w-8 text-primary-800 opacity-70 animate-spin' />
                         :
                         <>
-                            {data ? <IoMdPerson className='h-8 w-8' /> : <IoMdLogIn className='h-8 w-8' />}
+                            {session ? <IoMdPerson className='h-8 w-8' /> : <IoMdLogIn className='h-8 w-8' />}
                         </>
                     }
                 </>
