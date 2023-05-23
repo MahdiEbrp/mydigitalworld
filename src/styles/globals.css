@@ -37,6 +37,18 @@
     ---link-text: #7a9bf9;
     ---particle-color: #cbd5e0;
   }
+  .google {
+    ---primary800: #b81919;
+    ---primary900:#981414;
+    ---primary950:#711010;
+    ---primary-text800: #dcdada;
+  }
+  .github {
+    ---primary800: #303030;
+    ---primary900:#1e1e1e;
+    ---primary950:#101010;
+    ---primary-text800: #dcdada;
+  }
 }
 
 html,

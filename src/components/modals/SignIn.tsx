@@ -11,6 +11,7 @@ import { getTimeSinceDate } from '@/lib/dateUtility';
 import { SignInModalContext } from '../../context/SignInContext';
 import { AuthContext } from '@/context/AuthContext';
 import { Provider } from '@supabase/supabase-js';
+import { BsGithub, BsGoogle } from 'react-icons/bs';
 
 const SignIn = () => {
   const { isModalVisible, setModalVisibility } = useContext(SignInModalContext);
@@ -24,11 +25,21 @@ const SignIn = () => {
     <>
       <ImageLoader className='rounded' src={'/images/login.jpg'} alt='lock,security,safe,login' width={300} height={300} />
       <div className='flex flex-col justify-center items-center' >
-        <Button onClick={() => handleSignInWithOAuth('google')} >
-          Sign in with Google
+        <Button className='google' onClick={() => handleSignInWithOAuth('google')} >
+          <span className='inline-flex items-center gap-1'>
+            <BsGoogle />
+            <span>
+              Sign in with Google
+            </span>
+          </span>
         </Button>
-        <Button onClick={() => handleSignInWithOAuth('github')}>
-          Sign in with Github
+        <Button className='github' onClick={() => handleSignInWithOAuth('github')}>
+          <span className='inline-flex items-center gap-1'>
+            <BsGithub />
+            <span>
+              Sign in with Github
+            </span>
+          </span>
         </Button>
       </div>
     </>
