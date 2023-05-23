@@ -7,7 +7,7 @@ const MAX_ALT_LENGTH = 20;
 
 const ImageLoader = (props: ImageProps) => {
 
-    const { src, alt, width, height, ...rest } = props;
+    const { src, alt, width, height, className, ...rest } = props;
 
     const [status, setStatus] = useState<'loading' | 'loaded' | 'error'>('loading');
 
@@ -33,14 +33,14 @@ const ImageLoader = (props: ImageProps) => {
             }
             {status !== 'error' &&
                 <Image
+                    {...rest}
                     src={src}
                     alt={alt}
                     onLoad={handleLoad}
                     width={width}
                     height={height}
                     onError={handleError}
-                    className='object-cover'
-                    {...rest}
+                    className={`object-cover ${className ? className : ''}`}
                 />
             }
         </div>

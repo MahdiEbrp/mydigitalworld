@@ -13,7 +13,7 @@ type TabGroupProps = {
 
 const Tab: React.FC<TabProps> = ({ id, children, ...rest }) => {
     return (
-        <div id={id} {...rest}>
+        <div  {...rest} id={id}>
             {children}
         </div>
     );
@@ -22,7 +22,7 @@ const Tab: React.FC<TabProps> = ({ id, children, ...rest }) => {
 const TabGroup: React.FC<TabGroupProps> = ({ activeId, children, className, useFadeIn=false, ...rest }) => {
 
     return (
-        <div className={`flex flex-col ${className || ''}`} {...rest}>
+        <div {...rest} className={`flex flex-col ${className || ''}`}>
             {children.map((child) => {
                 const tab = child as ReactElement<TabProps>;
                 return (

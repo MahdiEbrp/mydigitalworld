@@ -35,6 +35,11 @@ module.exports = {
           900: "var(---primary900)",
           950: "var(---primary950)",
         },
+        ruby: {
+          100: "var(---ruby100)",
+          200: "var(---ruby200)",
+          300: "var(---ruby300)",
+        },
       },
       borderColor: {
         primary: {
@@ -70,6 +75,7 @@ module.exports = {
           950: "var(---primary-text950)",
         },
         link: "var(---link-text)",
+        buttonLight:"var(---button-light-text)",
         particle: "var(---particle-color)",
       },
       screens: {

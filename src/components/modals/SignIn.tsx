@@ -23,8 +23,8 @@ const SignIn = () => {
   const SignInForm = () =>
     <>
       <ImageLoader className='rounded' src={'/images/login.jpg'} alt='lock,security,safe,login' width={300} height={300} />
-      <div className='flex flex-col justify-center items-center'>
-        <Button onClick={() => handleSignInWithOAuth('google')}>
+      <div className='flex flex-col justify-center items-center' >
+        <Button onClick={() => handleSignInWithOAuth('google')} >
           Sign in with Google
         </Button>
         <Button onClick={() => handleSignInWithOAuth('github')}>

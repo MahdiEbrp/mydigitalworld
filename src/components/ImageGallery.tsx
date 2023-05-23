@@ -56,8 +56,10 @@ type GalleryProps = {
 
 export const ImageGallery = ({ images, onLikeClick, onDislikeClick, onCommentClick, ...rest }: GalleryProps) => {
 
+    const { className } = { ...rest };
+
     return (
-        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4' {...rest}>
+        <div {...rest} className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 ${className ? className : ''}`}>
             {images.map(image =>
                 <ImageCard key={image.id} title={image.title} location={image.location} src={image.src} description={image.description} likes={image.likes} dislikes={image.dislikes} comments={image.comments} id={image.id} onLikeClick={onLikeClick} onDislikeClick={onDislikeClick} onCommentClick={onCommentClick} />
             )}
