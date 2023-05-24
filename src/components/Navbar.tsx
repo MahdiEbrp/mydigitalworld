@@ -11,7 +11,7 @@ import { IconType } from 'react-icons/lib';
 import { IoMdLogIn, IoMdPerson } from 'react-icons/io';
 import { SignInModalContext } from '../context/SignInContext';
 import { ThemeContext } from '@/context/Theme';
-import { AuthContext } from '@/context/AuthContext';
+import { useSession } from 'next-auth/react';
 
 const Navbar = () => {
     const { theme, setTheme } = useContext(ThemeContext);
@@ -20,7 +20,7 @@ const Navbar = () => {
     const { isModalVisible, setModalVisibility } = useContext(SignInModalContext);
     const toggleMenu = () => setShowMenu(prevState => !prevState);
     const toggleModal = () => setModalVisibility(!isModalVisible);
-    const { isLoading, session } = useContext(AuthContext);
+    const { data:session,status } = useSession();
 
     const toggleTheme = () => {
         if (theme === 'dark') {
@@ -108,11 +108,11 @@ const Navbar = () => {
             <button
                 onClick={toggleModal}
                 type='button'
-                disabled={isLoading}
+                disabled={status==='loading'}
                 className='inline-flex items-center justify-center rounded-md text-primary-800 hover:animate-pulse active:-rotate-180 focus:outline-none transition duration-500 ease-in-out'
             >
                 <>
-                    {isLoading ?
+                    {status==='loading' ?
                         <AiOutlineLoading3Quarters className='text-4xl h-8 w-8 text-primary-800 opacity-70 animate-spin' />
                         :
                         <>

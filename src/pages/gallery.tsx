@@ -35,8 +35,8 @@ const sampleImages: ImageDataProps[] = [
     }
 ];
 
-const gallery: NextPage = () => {
 
+const Gallery: NextPage = () => {
     return (
         <>
             <Head>
@@ -48,4 +48,4 @@ const gallery: NextPage = () => {
         </>
     );
 };
-export default gallery;
+export default Gallery;

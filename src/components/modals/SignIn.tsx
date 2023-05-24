@@ -2,23 +2,21 @@ import React, { useContext, useState } from 'react';
 import ImageLoader from '../ImageLoader';
 import Modal from '../Modal';
 import Button from '../Button';
-import supabase from '@/lib/supabase';
 import CircularLoader from '../CircularLoader';
 import SubjectItem from '../SubjectItem';
 import { AiOutlineMail } from 'react-icons/ai';
-import { VscSignIn } from 'react-icons/vsc';
 import { getTimeSinceDate } from '@/lib/dateUtility';
 import { SignInModalContext } from '../../context/SignInContext';
-import { AuthContext } from '@/context/AuthContext';
-import { Provider } from '@supabase/supabase-js';
 import { BsGithub, BsGoogle } from 'react-icons/bs';
+import { signIn, signOut, useSession } from 'next-auth/react';
+import { FaCalendar } from 'react-icons/fa';
 
 const SignIn = () => {
   const { isModalVisible, setModalVisibility } = useContext(SignInModalContext);
-  const { session, isLoading } = useContext(AuthContext);
+  const { data:session, status } = useSession();
 
-  const handleSignInWithOAuth = async (provider: Provider) => {
-    await supabase.auth.signInWithOAuth({ provider });
+  const handleSignInWithOAuth = async (provider:string) => {
+    await signIn(provider);
   };
 
   const SignInForm = () =>
@@ -51,7 +49,7 @@ const SignIn = () => {
     const [isSignOutDisabled, setIsSignOutDisabled] = useState(false);
 
     const handleSignOut = async () => {
-      await supabase.auth.signOut();
+      await signOut();
       setModalVisibility(false);
       setIsSignOutDisabled(true);
     };
@@ -60,11 +58,11 @@ const SignIn = () => {
 
     return (
       <>
-        {session.user.email &&
-          <SubjectItem icon={AiOutlineMail} subject='Email' detail={session.user.email} />
+        {user.email &&
+          <SubjectItem icon={AiOutlineMail} subject='Email' detail={user.email} />
         }
-        {session.user.last_sign_in_at &&
-          <SubjectItem icon={VscSignIn} subject='Last sign in' detail={getTimeSinceDate(session.user.last_sign_in_at)} />
+        {session.user.createdAt &&
+          <SubjectItem icon={FaCalendar} subject='Created at' detail={getTimeSinceDate(session.user.createdAt.toString())} />
         }
         <div className='flex flex-col items-center'>
           <Button disabled={isSignOutDisabled} className='w-fit' onClick={handleSignOut}>Sign out</Button>
@@ -75,7 +73,7 @@ const SignIn = () => {
 
   return (
     <Modal isOpen={isModalVisible} title={session ? 'User Information' : 'Sign in'} onClose={() => setModalVisibility(false)}>
-      {isLoading ?
+      {status==='loading' ?
         <CircularLoader />
         :
         <div className='mt-3'>{session ? <UserInfo /> : <SignInForm />}</div>
