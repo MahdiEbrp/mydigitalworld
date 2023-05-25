@@ -22,7 +22,7 @@ model Topic {
   createdAt   DateTime   @default(now()) @db.Timestamptz
   description String?    @db.VarChar(255)
   userid      String
-  user        User       @relation(fields: [userid], references: [id])
+  user        User       @relation(fields: [userid], references: [id], onDelete: Cascade, onUpdate: Cascade)
   Feedback    Feedback[]
   Gallery     Gallery[]
 }
@@ -31,9 +31,9 @@ model Feedback {
   id        String    @id @default(uuid())
   createdAt DateTime? @default(now())
   isLike    Boolean?
-  user      User      @relation(fields: [userId], references: [id])
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId    String
-  topic     Topic     @relation(fields: [topicId], references: [id])
+  topic     Topic     @relation(fields: [topicId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   topicId   String
 
   @@unique([userId, topicId], name: "feedback_userid_topicid_key")
@@ -47,5 +47,5 @@ model Gallery {
   description String
   topicId     String
   altTag      String?
-  topic       Topic   @relation(fields: [topicId], references: [id])
+  topic       Topic   @relation(fields: [topicId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
