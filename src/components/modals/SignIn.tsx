@@ -7,9 +7,9 @@ import SubjectItem from '../SubjectItem';
 import { AiOutlineMail } from 'react-icons/ai';
 import { getTimeSinceDate } from '@/lib/dateUtility';
 import { SignInModalContext } from '../../context/SignInContext';
-import { BsGithub, BsGoogle } from 'react-icons/bs';
+import { BsFillCalendarDateFill, BsGithub, BsGoogle } from 'react-icons/bs';
 import { signIn, signOut, useSession } from 'next-auth/react';
-import { FaCalendar } from 'react-icons/fa';
+import { MdEmojiPeople } from 'react-icons/md';
 
 const SignIn = () => {
   const { isModalVisible, setModalVisibility } = useContext(SignInModalContext);
@@ -57,17 +57,23 @@ const SignIn = () => {
     if (!user) return <></>;
 
     return (
-      <>
+      <div>
+        {user.image &&
+          <ImageLoader src={user.image} width={128} height={128} alt='my avatar' className='rounded-full shadow-lg' />
+        }
+        {user.name &&
+          <SubjectItem icon={MdEmojiPeople} subject='Name' detail={user.name} />
+        }
         {user.email &&
           <SubjectItem icon={AiOutlineMail} subject='Email' detail={user.email} />
         }
-        {session.user.createdAt &&
-          <SubjectItem icon={FaCalendar} subject='Created at' detail={getTimeSinceDate(session.user.createdAt.toString())} />
+        {user.createdAt &&
+          <SubjectItem icon={BsFillCalendarDateFill} subject='Created at' detail={getTimeSinceDate(session.user.createdAt.toString())} />
         }
         <div className='flex flex-col items-center'>
           <Button disabled={isSignOutDisabled} className='w-fit' onClick={handleSignOut}>Sign out</Button>
         </div>
-      </>
+      </div>
     );
   };
 

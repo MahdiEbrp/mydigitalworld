@@ -8,9 +8,44 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now()) @db.Timestamptz
-  email     String?  @unique
+  id        String     @id @default(cuid())
+  createdAt DateTime   @default(now()) @db.Timestamptz
+  email     String?    @unique
   image     String?
   name      String?
+  Topic     Topic[]
+  Feedback  Feedback[]
+}
+
+model Topic {
+  id          String     @id @default(uuid())
+  createdAt   DateTime   @default(now()) @db.Timestamptz
+  description String?    @db.VarChar(255)
+  userid      String
+  user        User       @relation(fields: [userid], references: [id])
+  Feedback    Feedback[]
+  Gallery     Gallery[]
+}
+
+model Feedback {
+  id        String    @id @default(uuid())
+  createdAt DateTime? @default(now())
+  isLike    Boolean?
+  user      User      @relation(fields: [userId], references: [id])
+  userId    String
+  topic     Topic     @relation(fields: [topicId], references: [id])
+  topicId   String
+
+  @@unique([userId, topicId], name: "feedback_userid_topicid_key")
+}
+
+model Gallery {
+  id          String  @id @default(uuid())
+  title       String  @db.VarChar(500)
+  location    String  @db.VarChar(500)
+  src         String
+  description String
+  topicId     String
+  altTag      String?
+  topic       Topic   @relation(fields: [topicId], references: [id])
 }
