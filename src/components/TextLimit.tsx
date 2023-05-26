@@ -12,6 +12,8 @@ const TextLimit: FC<TextLimitProps> = ({ maxWords, className = '', children }) =
     const [showFullText, setShowFullText] = useState(false);
     const wordsArray = useMemo(() => children.trim().split(/\s+/), [children]);
     const wordCount = useMemo(() => wordsArray.length, [wordsArray]);
+    const hiddenWords = useMemo(() => wordsArray.slice(wordCount-maxWords).join(' '), [maxWords, wordCount, wordsArray]);
+
     const [isTransitioning, setIsTransitioning] = useState(false);
 
     useEffect(() => {
@@ -31,18 +33,19 @@ const TextLimit: FC<TextLimitProps> = ({ maxWords, className = '', children }) =
     const textToShow = wordsArray.slice(0, showFullText ? wordCount : maxWords).join(' ');
     const linkToShow =
         wordCount > maxWords &&
-            <span
-                onClick={handleButtonClick}
-                className='mt-4 px-4 py-2 font-bold rounded-lg cursor-pointer text-link focus:outline-none focus:shadow-outline-blue'
-            >
-                {showFullText ? 'Show Less' : 'Continue...'}
-            </span>
+        <span
+            onClick={handleButtonClick}
+            className='mt-4 px-4 py-2 font-bold rounded-lg cursor-pointer text-link focus:outline-none focus:shadow-outline-blue'
+        >
+            {showFullText ? 'Show Less' : 'Continue...'}
+        </span>
         ;
 
     return (
         <div className={`${className} inline-flex`}>
             <p className={`overflow-hidden ${isTransitioning ? 'max-h-0' : 'max-h-screen'} transition-[max-height] duration-300 text-ellipsis`}>
                 {textToShow}
+                {!showFullText && <span className='hidden'>{hiddenWords}</span>}
                 {linkToShow}
             </p>
         </div>
