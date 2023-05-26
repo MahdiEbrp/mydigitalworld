@@ -1,14 +1,16 @@
 import React from 'react';
-import Card from '../Card';
+import Card, { CardContent } from '../Card';
 import CircularLoader from '../CircularLoader';
 
 const Loader = () => {
     return (
         <Card>
             <CircularLoader />
-            <p>
-                &quot;Loading the awesomeness... Please hold tight!🤗&quot;
-            </p>
+            <CardContent>
+                <p>
+                    &quot;Loading the awesomeness... Please hold tight!🤗&quot;
+                </p>
+            </CardContent>
         </Card>
     );
 };
