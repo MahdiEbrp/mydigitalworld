@@ -18,6 +18,8 @@
     ---primary-text950: #505050;
     ---paper-text: black;
     ---link-text: #3944af;
+    ---like-text800: #ff3232;
+    ---like-text900: #ef1111;
     ---particle-color: #718096;
   }
   .dark {
@@ -33,20 +35,22 @@
     ---primary-text800: #abb7c8;
     ---primary-text900: #e2e8f0;
     ---primary-text950: #cfd9e8;
+    ---like-text800: #ff6f6f;
+    ---like-text900: #c14e4e;
     ---paper-text: white;
     ---link-text: #7a9bf9;
     ---particle-color: #cbd5e0;
   }
   .google {
     ---primary800: #b81919;
-    ---primary900:#981414;
-    ---primary950:#711010;
+    ---primary900: #981414;
+    ---primary950: #711010;
     ---primary-text800: #dcdada;
   }
   .github {
     ---primary800: #303030;
-    ---primary900:#1e1e1e;
-    ---primary950:#101010;
+    ---primary900: #1e1e1e;
+    ---primary950: #101010;
     ---primary-text800: #dcdada;
   }
 }

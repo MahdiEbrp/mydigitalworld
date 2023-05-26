@@ -11,7 +11,7 @@ export default function Home() {
       <div className='flex justify-center items-center min-h-screen'>
         <Card>
           <CardTitle title='Home' />
-          <CardContent>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus.</CardContent>
+          <CardContent><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus.</p></CardContent>
         </Card>
       </div>
     </>

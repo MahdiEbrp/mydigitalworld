@@ -74,8 +74,12 @@ module.exports = {
           900: "var(---primary-text900)",
           950: "var(---primary-text950)",
         },
+        like: {
+          800: "var(---like-text800)",
+          900: "var(---like-text900)",
+        },
         link: "var(---link-text)",
-        buttonLight:"var(---button-light-text)",
+        buttonLight: "var(---button-light-text)",
         particle: "var(---particle-color)",
       },
       screens: {

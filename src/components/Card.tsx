@@ -8,7 +8,7 @@ export const Card = ({ children,...rest }: CardProps) => {
     const maxWidthClassName = 'max-w-2xl';
     const { className } = {...rest};
     return (
-        <div {...rest} className={`bg-primary-500 gap-1 shadow-md rounded-lg m-2 p-6 ${maxWidthClassName} ${className ? className : ''}`}>
+        <div {...rest} className={`bg-primary-500 shadow-md rounded-lg m-2 p-6 ${maxWidthClassName} ${className ? className : ''}`}>
             {children}
         </div>
     );
@@ -22,8 +22,9 @@ export const CardImage = ({ children }: { children?: ReactElement | ReactElement
     return <div className='flex justify-center m-2'>{children}</div>;
 };
 
-export const CardContent = ({ children }: { children?: ReactElement | ReactElement[] | string; } = {}) => {
-    return <div className='text-primary-800 text-lg text-center'>{children}</div>;
+export const CardContent = ({ children, ...rest }: CardProps) => {
+    const { className } = { ...rest };
+    return <div {...rest} className={`text-primary-800 text-lg text-center ${className ? className : ''}`}>{children}</div>;
 };
 
 export default Card;
