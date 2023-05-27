@@ -1,3 +1,4 @@
+import { getFormattedDate, getTimeSinceDate } from '@/lib/dateUtility';
 import { Gallery } from '@/type/gallery';
 import React, { HTMLAttributes } from 'react';
 import { FaHeart, FaRegComment, FaThumbsDown } from 'react-icons/fa';
@@ -15,6 +16,7 @@ const ImageCard = ({
     dislikes,
     comments,
     topicId,
+    createdAt,
     likedBySessionUser,
     dislikedBySessionUser,
     onLikeClick = () => 0,
@@ -35,6 +37,9 @@ const ImageCard = ({
                 <p className='inline-flex gap-1 text-center text-primary-800'>
                     <IoLocationSharp />
                     {location}
+                </p>
+                <p className='text-base text-center text-primary-800'>
+                    {`${getTimeSinceDate(createdAt)} (${getFormattedDate(createdAt)})` }
                 </p>
                 <TextLimit className='text-lg text-primary-900 mt-4' maxWords={30}>
                     {description}

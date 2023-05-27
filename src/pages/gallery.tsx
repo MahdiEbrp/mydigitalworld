@@ -5,6 +5,7 @@ import ImageGallery from '@/components/ImageGallery';
 import { SignInModalContext } from '@/context/SignInContext';
 import useCachedAxios from '@/lib/cachedAxios';
 import { Gallery } from '@/type/gallery';
+import axios from 'axios';
 import { NextPage } from 'next';
 import { useSession } from 'next-auth/react';
 import Head from 'next/head';
@@ -16,9 +17,12 @@ const Gallery: NextPage = () => {
 
     const { data: session } = useSession();
 
-    const handleLikeButton = (id: string) => {
+    const handleLikeButton =async (id: string) => {
         if (!session)
             setModalVisibility(true);
+        await axios.post('/api/like/update', {
+            id, action: 'like'
+        });
     };
 
     return (

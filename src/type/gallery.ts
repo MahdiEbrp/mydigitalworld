@@ -1,5 +1,6 @@
 export type Gallery = {
     id: string;
+    createdAt: Date;
     title: string;
     location: string;
     src: string;

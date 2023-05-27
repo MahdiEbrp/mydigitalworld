@@ -28,24 +28,25 @@ model Topic {
 }
 
 model Feedback {
-  id        String    @id @default(uuid())
-  createdAt DateTime? @default(now())
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
   isLike    Boolean?
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId    String
-  topic     Topic     @relation(fields: [topicId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  topic     Topic    @relation(fields: [topicId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   topicId   String
 
   @@unique([userId, topicId], name: "feedback_userid_topicid_key")
 }
 
 model Gallery {
-  id          String  @id @default(uuid())
-  title       String  @db.VarChar(500)
-  location    String  @db.VarChar(500)
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now())
+  title       String   @db.VarChar(500)
+  location    String   @db.VarChar(500)
   src         String
   description String
   topicId     String
   altTag      String?
-  topic       Topic   @relation(fields: [topicId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  topic       Topic    @relation(fields: [topicId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
