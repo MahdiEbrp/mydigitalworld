@@ -14,6 +14,7 @@ export default function Home() {
           <CardContent><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus.</p></CardContent>
         </Card>
       </div>
+
     </>
   );
 }

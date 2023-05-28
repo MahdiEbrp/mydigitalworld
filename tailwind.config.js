@@ -19,9 +19,20 @@ module.exports = {
             opacity: 1,
           },
         },
+        slideInFromTop: {
+          from: {
+            opacity: 0,
+            top: "8rem",
+          },
+          to: {
+            opacity: 1,
+            top: "5rem",
+          },
+        },
       },
       animation: {
         fadeIn: "fadeIn 1s cubic-bezier(0.4, 0, 0.6, 1)",
+        slideInFromTop: "slideInFromTop 1s cubic-bezier(0.4, 0, 0.6, 1)",
       },
       backgroundColor: {
         primary: {

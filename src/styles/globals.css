@@ -4,6 +4,14 @@
 
 @layer base {
   :root {
+    ---like-text800: #ff3232;
+    ---like-text900: #ef1111;
+    ---link-text: #3944af;
+    ---paper-text: black;
+    ---particle-color: #718096;
+    ---primary-text800: #4b5563;
+    ---primary-text900: #363535;
+    ---primary-text950: #505050;
     ---primary100: #c2b396;
     ---primary200: #d7c4a9;
     ---primary300: #f5deb3;
@@ -13,16 +21,16 @@
     ---primary800: #fdba74;
     ---primary900: #ffaf5c;
     ---primary950: #ffb465;
-    ---primary-text800: #4b5563;
-    ---primary-text900: #363535;
-    ---primary-text950: #505050;
-    ---paper-text: black;
-    ---link-text: #3944af;
-    ---like-text800: #ff3232;
-    ---like-text900: #ef1111;
-    ---particle-color: #718096;
   }
   .dark {
+    ---like-text800: #ff6f6f;
+    ---like-text900: #c14e4e;
+    ---link-text: #7a9bf9;
+    ---paper-text: white;
+    ---particle-color: #cbd5e0;
+    ---primary-text800: #abb7c8;
+    ---primary-text900: #e2e8f0;
+    ---primary-text950: #cfd9e8;
     ---primary100: #1e1f22;
     ---primary200: #313338;
     ---primary300: #2b2d31;
@@ -32,14 +40,6 @@
     ---primary800: #282c34;
     ---primary900: #262a31;
     ---primary950: #20232a;
-    ---primary-text800: #abb7c8;
-    ---primary-text900: #e2e8f0;
-    ---primary-text950: #cfd9e8;
-    ---like-text800: #ff6f6f;
-    ---like-text900: #c14e4e;
-    ---paper-text: white;
-    ---link-text: #7a9bf9;
-    ---particle-color: #cbd5e0;
   }
   .google {
     ---primary800: #b81919;
@@ -52,6 +52,62 @@
     ---primary900: #1e1e1e;
     ---primary950: #101010;
     ---primary-text800: #dcdada;
+  }
+  .info_dark {
+    ---primary-text800: #cfddf1;
+    ---primary300: #263853;
+    ---primary800: #192537;
+    ---primary900: #2b4163;
+    ---primary950: #263a58;
+  }
+  .info {
+    ---primary-text800: #cfddf1;
+    ---primary300: #3d6ab0;
+    ---primary800: #26436e;
+    ---primary900: #254578;
+    ---primary950: #203a66;
+  }
+  .success {
+    ---primary-text800: #cdede3;
+    ---primary300: #39a84a;
+    ---primary800: #266e44;
+    ---primary900: #257850;
+    ---primary950: #20662d;
+  }
+  .success_dark {
+    ---primary-text800: #cdede3;
+    ---primary300: #265336;
+    ---primary800: #193726;
+    ---primary900: #2b633e;
+    ---primary950: #26584c;
+  }
+  .error {
+    ---primary-text800: #edcdcd;
+    ---primary300: #a83939;
+    ---primary800: #6e2626;
+    ---primary900: #782525;
+    ---primary950: #662020;
+  }
+  .error_dark {
+    ---primary-text800: #edcdcd;
+    ---primary300: #532626;
+    ---primary800: #371919;
+    ---primary900: #632b2b;
+    ---primary950: #582626;
+  }
+  .warning {
+    ---primary-text800: #7a7d2a;
+    ---primary300: #f7f713;
+    ---primary800: #bcbc3e;
+    ---primary900: #a9a93a;
+    ---primary950: #a1a138;
+  }
+  .warning_dark {
+    ---primary-text800: #edcdcd;
+    ---primary300: #4e5326;
+    ---primary800: #353719;
+    ---primary900: #5d632b;
+    ---primary950: #565826;
   }
 }
 
