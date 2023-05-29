@@ -1,4 +1,4 @@
-import { createContext, Dispatch } from 'react';
+import { createContext, Dispatch, useContext } from 'react';
 
 export const ThemeContext = createContext<{
     theme: string;
@@ -7,3 +7,6 @@ export const ThemeContext = createContext<{
     theme: '',
     setTheme: () => void 0,
 });
+
+export const useTheme = () => useContext(ThemeContext);
+

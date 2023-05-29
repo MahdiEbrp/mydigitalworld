@@ -1,7 +1,7 @@
 import Card, { CardContent, CardTitle } from '@/components/Card';
 import Head from 'next/head';
 
-export default function Home() {
+export const Home = () => {
 
   return (
     <>
@@ -12,9 +12,13 @@ export default function Home() {
         <Card>
           <CardTitle title='Home' />
           <CardContent><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus.</p></CardContent>
+
         </Card>
       </div>
 
+
     </>
   );
-}
+};
+
+export default Home;

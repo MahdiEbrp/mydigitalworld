@@ -1,6 +1,19 @@
 import Toast from '@/components/Toast';
-import React, { createContext, ReactNode, useContext } from 'react';
-import ReactDOM from 'react-dom';
+import React, { createContext, ReactNode, useCallback, useContext, useEffect, useState } from 'react';
+import { useTheme } from './Theme';
+
+type ToastProps = {
+    message: string;
+    severity: SeverityType;
+    duration: number;
+    show: boolean;
+    onClose: () => void;
+};
+
+type ToastQueueItem = {
+    id: number;
+    props: ToastProps;
+};
 
 type SeverityType = 'info' | 'warning' | 'success' | 'error';
 
@@ -8,44 +21,49 @@ type ToastContextProps = {
     showToast: (message: string, severity: SeverityType, duration?: number) => void;
 };
 
-export const ToastContext = createContext<ToastContextProps>({
+
+const ToastContext = createContext<ToastContextProps>({
     showToast: () => void 0,
 });
 
 export const useToast = () => useContext(ToastContext);
 
-const ToastProvider = ({ children }: { children: ReactNode; }) => {
+let toastIdCounter = 0;
 
-    const showToast = (message: string, severity: SeverityType, duration = 5000) => {
-
-        if (typeof document === 'undefined') return;
-
-        const toastElement = document.createElement('div');
-        const toastID = Math.random().toString(36).substring(2, 9);
-        toastElement.id = `toast-${toastID}`;
-        document.body.appendChild(toastElement);
-
-        const handleClose = () => {
-            const element = document.getElementById(`toast-${toastID}`);
-            if (element) {
-                document.body.removeChild(element);
-            }
+export const ToastProvider = ({ children }: { children: ReactNode; }) => {
+    const [toastQueue, setToastQueue] = useState<ToastQueueItem[]>([]);
+    const { theme } = useTheme();
+    const showToast = useCallback((message: string, severity: SeverityType, duration = 3000) => {
+        const toastId = ++toastIdCounter;
+        const toastProps: ToastProps = {
+            message,
+            severity,
+            duration,
+            show: true,
+            onClose: () => {
+                setToastQueue(queue => queue.filter(item => item.id !== toastId));
+            },
         };
-
-        ReactDOM.render(
-            <Toast message={message} severity={severity} show={true} duration={duration} onClose={handleClose} />,
-            toastElement
-        );
-
-    };
+        setToastQueue(queue => [...queue, { id: toastId, props: toastProps }]);
+    }, []);
+    useEffect(() => {
+        if (!toastQueue.length) {
+            toastIdCounter = 0;
+        }
+    }, [toastQueue]);
 
     const value = { showToast };
-
     return (
         <ToastContext.Provider value={value}>
             {children}
+            {toastQueue.map(({ id, props }) =>
+                <div key={id} className={`${props.severity}${theme === 'dark' ? '_dark' : ''}`}>
+                    <Toast  {...props} />
+                </div>
+            )}
         </ToastContext.Provider>
     );
 };
+
 
 export default ToastProvider;

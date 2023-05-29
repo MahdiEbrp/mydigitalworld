@@ -53,19 +53,19 @@
     ---primary950: #101010;
     ---primary-text800: #dcdada;
   }
-  .info_dark {
-    ---primary-text800: #cfddf1;
-    ---primary300: #263853;
-    ---primary800: #192537;
-    ---primary900: #2b4163;
-    ---primary950: #263a58;
-  }
   .info {
     ---primary-text800: #cfddf1;
     ---primary300: #3d6ab0;
     ---primary800: #26436e;
     ---primary900: #254578;
     ---primary950: #203a66;
+  }
+  .info_dark {
+    ---primary-text800: #cfddf1;
+    ---primary300: #263853;
+    ---primary800: #192537;
+    ---primary900: #2b4163;
+    ---primary950: #263a58;
   }
   .success {
     ---primary-text800: #cdede3;
