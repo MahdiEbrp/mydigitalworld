@@ -2,11 +2,15 @@ import { getFormattedDate, getTimeSinceDate } from '@/lib/dateUtility';
 import { Gallery } from '@/type/gallery';
 import React, { HTMLAttributes } from 'react';
 import { FaHeart, FaRegComment, FaThumbsDown } from 'react-icons/fa';
+import { HiOutlineRefresh } from 'react-icons/hi';
 import { IoLocationSharp } from 'react-icons/io5';
 import Card, { CardContent } from './Card';
 import ImageLoader from './ImageLoader';
 import TextLimit from './TextLimit';
 
+type ImageCardProps = {
+    isLoading: boolean;
+} & Gallery;
 const ImageCard = ({
     title,
     location,
@@ -19,10 +23,11 @@ const ImageCard = ({
     createdAt,
     likedBySessionUser,
     dislikedBySessionUser,
+    isLoading,
     onLikeClick = () => 0,
     onDislikeClick = () => 0,
     onCommentClick = () => 0
-}: Gallery) => {
+}: ImageCardProps) => {
     return (
         <Card className='animate-fadeIn max-w-xl overflow-hidden !p-0'>
             <ImageLoader
@@ -39,37 +44,46 @@ const ImageCard = ({
                     {location}
                 </p>
                 <p className='text-base text-center text-primary-800'>
-                    {`${getTimeSinceDate(createdAt)} (${getFormattedDate(createdAt)})` }
+                    {`${getTimeSinceDate(createdAt)} (${getFormattedDate(createdAt)})`}
                 </p>
                 <TextLimit className='text-lg text-primary-900 mt-4' maxWords={30}>
                     {description}
                 </TextLimit>
-                <div className='flex mt-4'>
-                    <button
-                        className={`mr-2 ${likedBySessionUser ? 'text-like-800' : 'text-primary-800'
-                            } hover:animate-pulse ${likedBySessionUser ? 'hover:text-like-900' : 'hover:text-primary-900'
-                            }`}
-                        onClick={() => onLikeClick(topicId)}
-                    >
-                        <FaHeart className='inline mr-1' />
-                        {likes}
-                    </button>
-                    <button
-                        className={`mr-2 ${dislikedBySessionUser ? 'text-paper' : 'text-primary-800'
-                            } hover:animate-pulse hover:text-primary-900`}
-                        onClick={() => onDislikeClick(topicId)}
-                    >
-                        <FaThumbsDown className='inline mr-1' />
-                        {dislikes}
-                    </button>
-                    <button
-                        className='text-primary-800 hover:animate-pulse hover:text-primary-900'
-                        onClick={() => onCommentClick(topicId)}
-                    >
-                        <FaRegComment className='inline mr-1' />
-                        {comments}
-                    </button>
-                </div>
+                <>
+                    {!isLoading &&
+                        <div className='flex mt-4'>
+                            <button
+                                className={`mr-2 ${likedBySessionUser ? 'text-like-800' : 'text-primary-800'
+                                    } hover:animate-pulse ${likedBySessionUser ? 'hover:text-like-900' : 'hover:text-primary-900'
+                                    }`}
+                                onClick={() => onLikeClick(topicId)}
+                            >
+                                <FaHeart className='inline mr-1' />
+                                {likes}
+                            </button>
+                            <button
+                                className={`mr-2 ${dislikedBySessionUser ? 'text-paper' : 'text-primary-800'
+                                    } hover:animate-pulse hover:text-primary-900`}
+                                onClick={() => onDislikeClick(topicId)}
+                            >
+                                <FaThumbsDown className='inline mr-1' />
+                                {dislikes}
+                            </button>
+                            <button
+                                className='text-primary-800 hover:animate-pulse hover:text-primary-900'
+                                onClick={() => onCommentClick(topicId)}
+                            >
+                                <FaRegComment className='inline mr-1' />
+                                {comments}
+                            </button>
+                        </div>
+                    }
+                    {isLoading &&
+                        <div className='flex mt-4'>
+                            <HiOutlineRefresh className='animate-spin' />
+                        </div>
+                    }
+                </>
             </CardContent>
         </Card>
     );
@@ -80,17 +94,18 @@ type GalleryProps = {
     onLikeClick?: (id: string) => void;
     onDislikeClick?: (id: string) => void;
     onCommentClick?: (id: string) => void;
+    loadingTopicIds?: string[],
 } & HTMLAttributes<HTMLDivElement>;
 
-const ImageGallery = ({ images, onLikeClick = () => void 0, onDislikeClick = () => void 0, onCommentClick = () => void 0, ...rest }: GalleryProps) => {
+const ImageGallery = ({ images, loadingTopicIds = [], onLikeClick = () => void 0, onDislikeClick = () => void 0, onCommentClick = () => void 0, ...rest }: GalleryProps) => {
     const { className } = rest;
-
     return (
         <div {...rest} className={`flex flex-row gap-1 justify-evenly flex-wrap items-start ${className ?? ''}`}>
             {images.map(({ id, ...image }) =>
                 <ImageCard
                     key={id}
                     id={id}
+                    isLoading={loadingTopicIds.includes(image.topicId)}
                     onLikeClick={onLikeClick}
                     onDislikeClick={onDislikeClick}
                     onCommentClick={onCommentClick}
