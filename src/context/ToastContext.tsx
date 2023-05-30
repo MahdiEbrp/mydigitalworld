@@ -33,6 +33,7 @@ let toastIdCounter = 0;
 export const ToastProvider = ({ children }: { children: ReactNode; }) => {
     const [toastQueue, setToastQueue] = useState<ToastQueueItem[]>([]);
     const { theme } = useTheme();
+
     const showToast = useCallback((message: string, severity: SeverityType, duration = 3000) => {
         const toastId = ++toastIdCounter;
         const toastProps: ToastProps = {
@@ -56,11 +57,17 @@ export const ToastProvider = ({ children }: { children: ReactNode; }) => {
     return (
         <ToastContext.Provider value={value}>
             {children}
-            {toastQueue.map(({ id, props }) =>
-                <div key={id} className={`${props.severity}${theme === 'dark' ? '_dark' : ''}`}>
-                    <Toast  {...props} />
-                </div>
-            )}
+            {/* why without this line dark theme on toast won't work */}
+            <span className='hidden error_dark warning_dark info_dark success_dark' />
+            {toastQueue.map(({ id, props }) => {
+                const { severity, ...rest } = props;
+                const style = `${severity}${theme === 'dark' ? '_dark' : ''}`;
+                return (
+                    <div key={id} className={`${style}`}>
+                        <Toast {...rest} />
+                    </div>
+                );
+            })}
         </ToastContext.Provider>
     );
 };

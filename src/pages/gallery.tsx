@@ -31,7 +31,7 @@ const Gallery: NextPage = () => {
             await axios.post('/api/like/update', { id, action: 'like' });
         } catch (error) {
             if (error instanceof AxiosError)
-                toast.showToast(getHumorousHTTPMessage(error.response?.status || 0), 'error', 14000);
+                toast.showToast(getHumorousHTTPMessage(error.response?.status || 0), 'error', 4000);
             else
                 toast.showToast('Seriously, doesn\'t know what\'s happening.🧐👻', 'error', 2000);
         }
