@@ -3,7 +3,7 @@ const httpStatusMessages = [
     { code: 401, message: '401 (Unauthorized): Sorry bud, this virtual playground is for VIPs only. Unless you\'re Batman, Gandalf, or a unicorn...  🚫' },
     { code: 402, message: '402 (Payment Required): Give us all your money 💰' },
     { code: 403, message: '403 (Forbidden): You shall not pass! 🔒' },
-    { code: 404, message: '404 (Not Found): How mysterious! 🔍 It seems like something is missing' },
+    { code: 404, message: '404 (Not Found): How mysterious! 🔍 It seems like something is missing.🤔' },
     { code: 405, message: '405 (Method Not Allowed): You\'re doing it wrong! 🙅‍♂️' },
     { code: 406, message: '406 (Not Acceptable): I don\'t like your taste 👎' },
     { code: 407, message: '407 (Proxy Authentication Required): Who are you? Identify yourself! 🕵️‍♂️' },

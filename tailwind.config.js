@@ -8,6 +8,16 @@ module.exports = {
     // Or if using `src` directory:
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
+  safelist: [
+    "success",
+    "success_dark",
+    "error",
+    "error_dark",
+    "info",
+    "info_dark",
+    "warning",
+    "warning_dark"
+  ],
   theme: {
     extend: {
       keyframes: {

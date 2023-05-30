@@ -57,13 +57,11 @@ export const ToastProvider = ({ children }: { children: ReactNode; }) => {
     return (
         <ToastContext.Provider value={value}>
             {children}
-            {/* why without this line dark theme on toast won't work */}
-            <span className='hidden error_dark warning_dark info_dark success_dark' />
             {toastQueue.map(({ id, props }) => {
                 const { severity, ...rest } = props;
                 const style = `${severity}${theme === 'dark' ? '_dark' : ''}`;
                 return (
-                    <div key={id} className={`${style}`}>
+                    <div key={id} className={style}>
                         <Toast {...rest} />
                     </div>
                 );
