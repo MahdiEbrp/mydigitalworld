@@ -1,11 +1,11 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { getSession } from 'next-auth/react';
 import prismaClient from '../../../lib/prismaClient';
+import { getSession } from '../auth/[...nextauth]';
 
 const prisma = prismaClient;
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    const session = await getSession({ req });
+    const session = await getSession(req, res);
 
     if (req.method !== 'POST') {
         return res.status(405).end();

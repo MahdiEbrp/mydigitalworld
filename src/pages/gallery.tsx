@@ -5,9 +5,8 @@ import Loader from '@/components/display/Loader';
 import NothingToSee from '@/components/display/NothingToSee';
 import axios, { AxiosError } from 'axios';
 import getHumorousHTTPMessage from '@/lib/humorousHTTPMessage';
-import useCachedAxios from '@/lib/cachedAxios';
 import React, { useContext, useEffect, useState } from 'react';
-import { NextPage } from 'next';
+import { GetServerSidePropsContext, NextPage } from 'next';
 import { SignInModalContext } from '@/context/SignInContext';
 import { useSession } from 'next-auth/react';
 import { useToast } from '@/context/ToastContext';
@@ -20,11 +19,15 @@ type LikeResponse = {
     dislikedBySessionUser: boolean;
 };
 
-const GalleryPage: NextPage = () => {
-    const { data: galleryData, error: galleryError, isLoading: isGalleryLoading } = useCachedAxios<Gallery[]>('GALLERY_DATA', '/api/gallery');
+type Props = {
+    galleryData: Gallery[];
+    hasError: boolean;
+};
+
+const GalleryPage: NextPage<Props> = ({ galleryData, hasError }) => {
     const { setModalVisibility } = useContext(SignInModalContext);
     const [loadingTopicIds, setLoadingTopicIds] = useState<string[]>([]);
-    const [updatedGalleryData, setUpdatedGalleryData] = useState<Gallery[] | undefined>(undefined);
+    const [updatedGalleryData, setUpdatedGalleryData] = useState<Gallery[] | undefined>(galleryData);
     const { data: session } = useSession();
     const toast = useToast();
 
@@ -78,20 +81,43 @@ const GalleryPage: NextPage = () => {
                 <title>Gallery</title>
             </Head>
             <div className='flex justify-center items-center min-h-screen m-2'>
-                {isGalleryLoading ?
-                    <Loader />
+                {updatedGalleryData ?
+                    updatedGalleryData.length === 0 ?
+                        hasError ? <FetchError /> : <NothingToSee />
+                        :
+                        <ImageGallery images={updatedGalleryData} onLikeClick={(id) => handleLikeDislike(id, true)} onDislikeClick={(id) => handleLikeDislike(id, false)} loadingTopicIds={loadingTopicIds} />
                     :
-                    <>
-                        {updatedGalleryData ?
-                            <ImageGallery images={updatedGalleryData} onLikeClick={(id) => handleLikeDislike(id, true)} onDislikeClick={(id) => handleLikeDislike(id, false)} loadingTopicIds={loadingTopicIds} />
-                            :
-                            galleryError ? <FetchError /> : <NothingToSee />
-                        }
-                    </>
+                    <Loader />
                 }
             </div>
         </>
     );
+};
+
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+    const { req } = ctx;
+
+    try {
+        const { data } = await axios.get(`${process.env.NEXT_PUBLIC_HOST}/api/gallery`, {
+            withCredentials: true,
+            headers: {
+                Cookie: req.headers.cookie,
+            }
+        });
+        return {
+            props: {
+                galleryData: data,
+                hasError: false,
+            },
+        };
+    } catch (error) {
+        return {
+            props: {
+                galleryData: [],
+                hasError: true,
+            },
+        };
+    }
 };
 
 export default GalleryPage;

@@ -1,8 +1,9 @@
 import GithubProvider from 'next-auth/providers/github';
 import GoogleProvider from 'next-auth/providers/google';
-import NextAuth, { Session } from 'next-auth';
+import NextAuth, { getServerSession, Session } from 'next-auth';
 import prismaClient from '@/lib/prismaClient';
 import { JWT } from 'next-auth/jwt';
+import { NextApiRequest, NextApiResponse } from 'next';
 export const authOptions = {
     providers: [
         GithubProvider({
@@ -18,26 +19,22 @@ export const authOptions = {
     callbacks: {
         async session(params: { session: Session; token: JWT; }) {
             const { session } = params;
-            let user = await prismaClient.user.findFirst({
-                where: {
-                    email: session.user?.email
-                }
+            if (!session.user.email)
+                return Promise.reject(session);
+            const user = await prismaClient.user.upsert({
+                where: { email: session.user?.email },
+                update: {},
+                create: {
+                    email: session.user?.email,
+                    image: session.user?.image,
+                    name: session.user?.name,
+                },
             });
-            if (!user) {
-
-                user = await prismaClient.user.create({
-                    data: {
-                        email: session.user?.email,
-                        image: session.user?.image,
-                        name: session.user?.name,
-                    }
-                });
-                if (!user)
-                    Promise.reject(session);
-            }
             return Promise.resolve({ ...session, user });
         },
-
     },
+};
+export const getSession = async (req: NextApiRequest, res: NextApiResponse) => {
+    return await getServerSession(req, res, authOptions);
 };
 export default NextAuth(authOptions);
