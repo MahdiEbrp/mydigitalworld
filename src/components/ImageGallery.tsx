@@ -10,6 +10,7 @@ import TextLimit from './TextLimit';
 
 type ImageCardProps = {
     isLoading: boolean;
+    isDisable: boolean;
 } & Gallery;
 const ImageCard = ({
     title,
@@ -24,6 +25,7 @@ const ImageCard = ({
     likedBySessionUser,
     dislikedBySessionUser,
     isLoading,
+    isDisable,
     onLikeClick = () => 0,
     onDislikeClick = () => 0,
     onCommentClick = () => 0
@@ -51,7 +53,7 @@ const ImageCard = ({
                 </TextLimit>
                 <>
                     {!isLoading &&
-                        <div className='flex mt-4'>
+                        <div className={`flex mt-4 ${isDisable ? 'pointer-events-none' : ''}`}>
                             <button
                                 className={`mr-2 ${likedBySessionUser ? 'text-like-800' : 'text-primary-800'
                                     } hover:animate-pulse ${likedBySessionUser ? 'hover:text-like-900' : 'hover:text-primary-900'
@@ -84,8 +86,8 @@ const ImageCard = ({
                         </div>
                     }
                 </>
-            </CardContent>
-        </Card>
+            </CardContent >
+        </Card >
     );
 };
 
@@ -95,9 +97,10 @@ type GalleryProps = {
     onDislikeClick?: (id: string) => void;
     onCommentClick?: (id: string) => void;
     loadingTopicIds?: string[],
+    disabledTopicIds?: string[],
 } & HTMLAttributes<HTMLDivElement>;
 
-const ImageGallery = ({ images, loadingTopicIds = [], onLikeClick = () => void 0, onDislikeClick = () => void 0, onCommentClick = () => void 0, ...rest }: GalleryProps) => {
+const ImageGallery = ({ images, loadingTopicIds = [], disabledTopicIds = [], onLikeClick = () => void 0, onDislikeClick = () => void 0, onCommentClick = () => void 0, ...rest }: GalleryProps) => {
     const { className } = rest;
     return (
         <div {...rest} className={`flex flex-row gap-1 justify-evenly flex-wrap items-start ${className ?? ''}`}>
@@ -106,6 +109,7 @@ const ImageGallery = ({ images, loadingTopicIds = [], onLikeClick = () => void 0
                     key={id}
                     id={id}
                     isLoading={loadingTopicIds.includes(image.topicId)}
+                    isDisable={disabledTopicIds.includes(image.topicId)}
                     onLikeClick={onLikeClick}
                     onDislikeClick={onDislikeClick}
                     onCommentClick={onCommentClick}

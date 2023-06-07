@@ -6,7 +6,7 @@ import NothingToSee from '@/components/display/NothingToSee';
 import axios, { AxiosError } from 'axios';
 import getHumorousHTTPMessage from '@/lib/humorousHTTPMessage';
 import React, { useContext, useEffect, useState } from 'react';
-import { GetServerSidePropsContext, NextPage } from 'next';
+import { GetServerSidePropsContext } from 'next';
 import { SignInModalContext } from '@/context/SignInContext';
 import { useSession } from 'next-auth/react';
 import { useToast } from '@/context/ToastContext';
@@ -24,10 +24,11 @@ type Props = {
     hasError: boolean;
 };
 
-const GalleryPage: NextPage<Props> = ({ galleryData, hasError }) => {
+const GalleryPage = ({ galleryData, hasError }: Props) => {
     const { setModalVisibility } = useContext(SignInModalContext);
-    const [loadingTopicIds, setLoadingTopicIds] = useState<string[]>([]);
-    const [updatedGalleryData, setUpdatedGalleryData] = useState<Gallery[] | undefined>(galleryData);
+    const [updatedGalleryData, setUpdatedGalleryData] = useState<Gallery[]>(galleryData ?? []);
+    const [disableTopicIds, setDisableTopicIds] = useState<string[]>([]);
+
     const { data: session } = useSession();
     const toast = useToast();
 
@@ -42,14 +43,35 @@ const GalleryPage: NextPage<Props> = ({ galleryData, hasError }) => {
             setModalVisibility(true);
             return;
         }
-        if (!updatedGalleryData)
+
+        if (!updatedGalleryData) {
             return;
-        setLoadingTopicIds(prevLoadingIds => [...prevLoadingIds, topicId]);
+        }
+        setDisableTopicIds(prevDisableIds => [...prevDisableIds, topicId]);
 
         try {
-            const { data } = await axios.post('/api/like/update', { topicId: topicId, isLike: isLike });
-            const response = data as LikeResponse;
-            const updatedData = updatedGalleryData.map((image) => {
+            const newGalleryData = updatedGalleryData.map((image) => {
+                if (image.topicId === topicId) {
+                    const alreadyLiked = image.likedBySessionUser;
+                    const alreadyDisliked = image.dislikedBySessionUser;
+                    image.likes += alreadyLiked ? -1 : isLike ? 1 : 0;
+                    image.dislikes += alreadyDisliked ? -1 : !isLike ? 1 : 0;
+                    image.likedBySessionUser = !alreadyLiked && isLike;
+                    image.dislikedBySessionUser = !alreadyDisliked && !isLike;
+
+                    if (image.likedBySessionUser) {
+                        toast.showToast('🥰 Aww, you liked my post! Thank you so much! 🙌', 'success', 2000);
+                    }
+                }
+
+                return image;
+            });
+
+            setUpdatedGalleryData(newGalleryData);
+
+            const { data: response } = await axios.post<LikeResponse>('/api/like/update', { isLike, topicId });
+
+            const updatedData = newGalleryData.map((image) => {
                 if (image.topicId === topicId) {
                     return {
                         ...image,
@@ -59,20 +81,41 @@ const GalleryPage: NextPage<Props> = ({ galleryData, hasError }) => {
                         dislikedBySessionUser: response.dislikedBySessionUser,
                     };
                 }
+
                 return image;
             });
+
             setUpdatedGalleryData(updatedData);
-            if (response.likedBySessionUser)
-                toast.showToast('🥰 Aww, you liked my post! Thank you so much! 🙌', 'success', 2000);
+
         } catch (error) {
+
             if (error instanceof AxiosError)
                 toast.showToast(getHumorousHTTPMessage(error.response?.status || 0), 'error', 4000);
             else
                 toast.showToast('Seriously, doesn\'t know what\'s happening.🧐👻', 'error', 2000);
-        } finally {
-            setLoadingTopicIds(prevLoadingIds => prevLoadingIds.filter(topicId => topicId !== topicId));
-        }
 
+            setUpdatedGalleryData(galleryData ?? []);
+        }
+        finally {
+            setDisableTopicIds(prevDisableIds => prevDisableIds.filter(id => id !== topicId));
+        }
+    };
+
+    const renderContent = () => {
+        if (!updatedGalleryData)
+            return <Loader />;
+
+        if (updatedGalleryData.length === 0)
+            return hasError ? <FetchError /> : <NothingToSee />;
+
+        return (
+            <ImageGallery
+                images={updatedGalleryData}
+                onLikeClick={(id) => handleLikeDislike(id, true)}
+                onDislikeClick={(id) => handleLikeDislike(id, false)}
+                disabledTopicIds={disableTopicIds}
+            />
+        );
     };
 
     return (
@@ -80,19 +123,11 @@ const GalleryPage: NextPage<Props> = ({ galleryData, hasError }) => {
             <Head>
                 <title>Gallery</title>
             </Head>
-            <div className='flex justify-center items-center min-h-screen m-2'>
-                {updatedGalleryData ?
-                    updatedGalleryData.length === 0 ?
-                        hasError ? <FetchError /> : <NothingToSee />
-                        :
-                        <ImageGallery images={updatedGalleryData} onLikeClick={(id) => handleLikeDislike(id, true)} onDislikeClick={(id) => handleLikeDislike(id, false)} loadingTopicIds={loadingTopicIds} />
-                    :
-                    <Loader />
-                }
-            </div>
+            <div className='flex justify-center items-center min-h-screen m-2'>{renderContent()}</div>
         </>
     );
 };
+
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
     const { req } = ctx;
