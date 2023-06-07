@@ -19,19 +19,26 @@ export const authOptions = {
     callbacks: {
         async session(params: { session: Session; token: JWT; }) {
             const { session } = params;
-            if (!session.user.email)
-                return Promise.reject(session);
-            const user = await prismaClient.user.upsert({
-                where: { email: session.user?.email },
-                update: {},
-                create: {
-                    email: session.user?.email,
-                    image: session.user?.image,
-                    name: session.user?.name,
-                },
+            let user = await prismaClient.user.findFirst({
+                where: {
+                    email: session.user?.email
+                }
             });
+            if (!user) {
+
+                user = await prismaClient.user.create({
+                    data: {
+                        email: session.user?.email,
+                        image: session.user?.image,
+                        name: session.user?.name,
+                    }
+                });
+                if (!user)
+                    Promise.reject(session);
+            }
             return Promise.resolve({ ...session, user });
         },
+
     },
 };
 export const getSession = async (req: NextApiRequest, res: NextApiResponse) => {
