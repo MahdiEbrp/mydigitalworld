@@ -11,6 +11,7 @@ import { SignInModalContext } from '@/context/SignInContext';
 import { useSession } from 'next-auth/react';
 import { useToast } from '@/context/ToastContext';
 import { Gallery } from '@/type/gallery';
+import useGalleryData from '@/lib/useGalleryData';
 
 type LikeResponse = {
     likes: number,
@@ -28,6 +29,7 @@ const GalleryPage = ({ galleryData, hasError }: Props) => {
     const { setModalVisibility } = useContext(SignInModalContext);
     const [updatedGalleryData, setUpdatedGalleryData] = useState<Gallery[]>(galleryData ?? []);
     const [disableTopicIds, setDisableTopicIds] = useState<string[]>([]);
+    const { data } = useGalleryData();
 
     const { data: session } = useSession();
     const toast = useToast();
@@ -37,6 +39,11 @@ const GalleryPage = ({ galleryData, hasError }: Props) => {
             setUpdatedGalleryData(galleryData);
         }
     }, [galleryData]);
+    useEffect(() => {
+        if (data) {
+            setUpdatedGalleryData(data);
+        }
+    }, [data]);
 
     const handleLikeDislike = async (topicId: string, isLike: boolean) => {
         if (!session) {

@@ -24,6 +24,7 @@ const ImageCard = ({
     createdAt,
     likedBySessionUser,
     dislikedBySessionUser,
+    commentedBySessionUser,
     isLoading,
     isDisable,
     onLikeClick = () => 0,
@@ -72,7 +73,8 @@ const ImageCard = ({
                                 {dislikes}
                             </button>
                             <button
-                                className='text-primary-800 hover:animate-pulse hover:text-primary-900'
+                                className={`${commentedBySessionUser ? 'text-paper' : 'text-primary-800'
+                                    } hover:animate-pulse hover:text-primary-900`}
                                 onClick={() => onCommentClick(topicId)}
                             >
                                 <FaRegComment className='inline mr-1' />

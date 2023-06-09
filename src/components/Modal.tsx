@@ -1,4 +1,6 @@
+import { useTheme } from '@/context/Theme';
 import React, { ReactNode, useEffect, useState } from 'react';
+import { FaTimes } from 'react-icons/fa';
 import Button from './Button';
 import Card, { CardContent } from './Card';
 
@@ -14,14 +16,15 @@ const MODAL_TRANSITION_DURATION = 500;
 const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
     const [isModalOpen, setIsModalOpen] = useState(isOpen);
     const [isHidden, setIsHidden] = useState(false);
+    const { theme } = useTheme();
+    const style = theme === 'dark' ? 'error_dark' : 'error';
 
     const handleClose = () => {
         setIsModalOpen(false);
         onClose();
     };
     useEffect(() => {
-        if (isOpen !== isModalOpen)
-        {
+        if (isOpen !== isModalOpen) {
             setIsModalOpen(isOpen);
             setIsHidden(false);
             return;
@@ -35,7 +38,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
             return () => clearTimeout(timeoutId);
         }
 
-    }, [isHidden, isModalOpen,isOpen]);
+    }, [isHidden, isModalOpen, isOpen]);
 
     return (
         <div
@@ -57,6 +60,11 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
                     aria-labelledby='modal-headline'
                 >
                     <div>
+                        <div className='flex flex-col items-end'>
+                            <Button className={style} onClick={handleClose}>
+                                <FaTimes />
+                            </Button>
+                        </div>
                         <CardContent>
                             <div className='mt-3 text-center sm:mt-5'>
                                 <h3 className='text-lg leading-6 font-medium text-paper' id='modal-headline'>
@@ -65,9 +73,6 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
                                 <div className='mt-2'>{children}</div>
                             </div>
                         </CardContent>
-                    </div>
-                    <div className='inline-flex mt-5 sm:mt-6'>
-                        <Button onClick={handleClose}>Close</Button>
                     </div>
                 </Card>
             </div>

@@ -20,19 +20,29 @@ export const Handler = async (req: NextApiRequest, res: NextApiResponse) => {
             },
             _count: true
         });
-        const galleryWithFeedback = galleries.map(gallery => {
+        const galleryComments = await prismaClient.comment.findMany({
+            where: {
+                topicId: {in:galleryIds}
+            }
+        });
+
+        const galleryWithFeedback = galleries.map( gallery => {
             const likes = feedback.filter(fb => fb.topicId === gallery.topicId && fb.isLike).reduce((acc, curr) => acc + curr._count, 0);
             const dislikes = feedback.filter(fb => fb.topicId === gallery.topicId && fb.isLike === false).reduce((acc, curr) => acc + curr._count, 0);
+            const comments = galleryComments.filter(c => c.topicId === gallery.topicId);
 
             let likedBySessionUser = false;
             let dislikedBySessionUser = false;
+            let commentedBySessionUser = false;
+
             if (session?.user.id) {
                 const feedbackBySessionUser = feedback.filter(fb => fb.topicId === gallery.topicId && fb.userId === session.user.id);
                 likedBySessionUser = feedbackBySessionUser.some(fb => fb.isLike);
                 dislikedBySessionUser = feedbackBySessionUser.some(fb => fb.isLike === false);
+                commentedBySessionUser = comments.some(comment => comment.userId === session.user.id);
             }
 
-            return { ...gallery, likes, dislikes, likedBySessionUser, dislikedBySessionUser };
+            return { ...gallery, likes, dislikes, likedBySessionUser, dislikedBySessionUser, comments: comments.length, commentedBySessionUser };
         });
 
         return res.status(200).json(galleryWithFeedback);

@@ -10,6 +10,7 @@ export type Gallery = {
     comments: number;
     topicId: string;
     likedBySessionUser: boolean,
+    commentedBySessionUser: boolean,
     dislikedBySessionUser: boolean;
     onLikeClick?: (id: string) => void;
     onDislikeClick?: (id: string) => void;

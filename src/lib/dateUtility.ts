@@ -1,5 +1,6 @@
 import { differenceInDays, differenceInMonths, differenceInYears, formatDistanceToNow, subMonths, subYears, format } from 'date-fns';
 export const calculateAge = (birthDate: Date) => {
+
     const currentDate = new Date();
     const yearsDiff = differenceInYears(currentDate, birthDate);
     const currentDateAfterYears = subYears(currentDate, yearsDiff);
@@ -7,8 +8,24 @@ export const calculateAge = (birthDate: Date) => {
     const currentDateAfterMonths = subMonths(currentDateAfterYears, monthsDiff);
     const daysDiff = differenceInDays(currentDateAfterMonths, birthDate);
 
-    return `${yearsDiff} year${yearsDiff === 1 ? '' : 's'}, ${monthsDiff} month${monthsDiff === 1 ? '' : 's'}, ${daysDiff} day${daysDiff === 1 ? '' : 's'}`;
+    const getDurationString = (value: number, unit: 'year' | 'month' | 'day'): string => {
+        if (value === 1) {
+            return `1 ${unit}`;
+        } else if (value > 1) {
+            return `${value} ${unit}s`;
+        }
+
+        return '';
+    };
+    const yearsString = getDurationString(yearsDiff, 'year');
+    const monthsString = getDurationString(monthsDiff, 'month');
+    const daysString = getDurationString(daysDiff, 'day');
+
+    const durationStrings = [yearsString, monthsString, daysString].filter(Boolean);
+
+    return durationStrings.join(', ');
 };
+
 export const getTimeSinceDate = (dateValue: string | Date) => {
     const date = new Date(dateValue);
     return formatDistanceToNow(date, { addSuffix: true });
