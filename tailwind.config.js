@@ -16,7 +16,7 @@ module.exports = {
     "info",
     "info_dark",
     "warning",
-    "warning_dark"
+    "warning_dark",
   ],
   theme: {
     extend: {
@@ -61,6 +61,7 @@ module.exports = {
           200: "var(---ruby200)",
           300: "var(---ruby300)",
         },
+        input: "var(---input-bg)",
       },
       borderColor: {
         primary: {
@@ -78,6 +79,7 @@ module.exports = {
           900: "var(---primary-text900)",
           950: "var(---primary-text950)",
         },
+        input: "var(---input-bg)",
       },
       colors: {
         primaryBackground: {
@@ -102,6 +104,7 @@ module.exports = {
         link: "var(---link-text)",
         buttonLight: "var(---button-light-text)",
         particle: "var(---particle-color)",
+        input: "var(---input-color)",
       },
       screens: {
         print: { raw: "print" },

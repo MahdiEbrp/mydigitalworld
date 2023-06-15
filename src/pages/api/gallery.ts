@@ -2,6 +2,7 @@ import prismaClient from '@/lib/prismaClient';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from './auth/[...nextauth]';
 
+const prisma = prismaClient;
 
 export const Handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const session =await getSession(req, res);
@@ -10,17 +11,17 @@ export const Handler = async (req: NextApiRequest, res: NextApiResponse) => {
         return res.status(405).json({ message: 'ERR_INVALID_METHOD' });
 
     try {
-        const galleries = await prismaClient.gallery.findMany();
+        const galleries = await prisma.gallery.findMany();
         const galleryIds = galleries.map(gallery => gallery.topicId);
 
-        const feedback = await prismaClient.feedback.groupBy({
+        const feedback = await prisma.feedback.groupBy({
             by: ['topicId', 'isLike', 'userId'],
             where: {
                 topicId: { in: galleryIds }
             },
             _count: true
         });
-        const galleryComments = await prismaClient.comment.findMany({
+        const galleryComments = await prisma.comment.findMany({
             where: {
                 topicId: {in:galleryIds}
             }

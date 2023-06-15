@@ -21,6 +21,8 @@
     ---primary800: #fdba74;
     ---primary900: #ffaf5c;
     ---primary950: #ffb465;
+    ---input-bg: #ffcb94;
+    ---input-color: #4b4b4b;
   }
   .dark {
     ---like-text800: #ff6f6f;
@@ -40,6 +42,8 @@
     ---primary800: #282c34;
     ---primary900: #262a31;
     ---primary950: #20232a;
+    ---input-bg: #6e7687;
+    ---input-color: #ecf0f5;
   }
   .google {
     ---primary800: #b81919;
@@ -97,7 +101,7 @@
   }
   .warning {
     ---primary-text800: #7a7d2a;
-    ---primary300: #f7f713;
+    ---primary300: #ffff69;
     ---primary800: #bcbc3e;
     ---primary900: #a9a93a;
     ---primary950: #a1a138;
@@ -121,6 +125,7 @@ body,
   min-height: 100vh;
   max-width: 100%;
   overflow-x: hidden;
+  scroll-behavior: smooth;
 }
 
 a {

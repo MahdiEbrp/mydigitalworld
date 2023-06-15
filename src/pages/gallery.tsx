@@ -5,13 +5,12 @@ import Loader from '@/components/display/Loader';
 import NothingToSee from '@/components/display/NothingToSee';
 import axios, { AxiosError } from 'axios';
 import getHumorousHTTPMessage from '@/lib/humorousHTTPMessage';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { GetServerSidePropsContext } from 'next';
-import { SignInModalContext } from '@/context/SignInContext';
-import { useSession } from 'next-auth/react';
 import { useToast } from '@/context/ToastContext';
 import { Gallery } from '@/type/gallery';
 import useGalleryData from '@/lib/useGalleryData';
+import { useCommentModal } from '@/context/CommentContext';
 
 type LikeResponse = {
     likes: number,
@@ -26,12 +25,10 @@ type Props = {
 };
 
 const GalleryPage = ({ galleryData, hasError }: Props) => {
-    const { setModalVisibility } = useContext(SignInModalContext);
     const [updatedGalleryData, setUpdatedGalleryData] = useState<Gallery[]>(galleryData ?? []);
-    const [disableTopicIds, setDisableTopicIds] = useState<string[]>([]);
-    const { data } = useGalleryData();
-
-    const { data: session } = useSession();
+    const [disabledTopicIds, setDisabledTopicIds] = useState<string[]>([]);
+    const { galleryData: galleryDataFromApi } = useGalleryData();
+    const commentModal = useCommentModal();
     const toast = useToast();
 
     useEffect(() => {
@@ -40,21 +37,17 @@ const GalleryPage = ({ galleryData, hasError }: Props) => {
         }
     }, [galleryData]);
     useEffect(() => {
-        if (data) {
-            setUpdatedGalleryData(data);
+        if (galleryDataFromApi) {
+            setUpdatedGalleryData(galleryDataFromApi);
         }
-    }, [data]);
+    }, [galleryDataFromApi]);
 
     const handleLikeDislike = async (topicId: string, isLike: boolean) => {
-        if (!session) {
-            setModalVisibility(true);
-            return;
-        }
 
-        if (!updatedGalleryData) {
+        if (!updatedGalleryData)
             return;
-        }
-        setDisableTopicIds(prevDisableIds => [...prevDisableIds, topicId]);
+
+        setDisabledTopicIds(prevDisableIds => [...prevDisableIds, topicId]);
 
         try {
             const newGalleryData = updatedGalleryData.map((image) => {
@@ -104,8 +97,16 @@ const GalleryPage = ({ galleryData, hasError }: Props) => {
             setUpdatedGalleryData(galleryData ?? []);
         }
         finally {
-            setDisableTopicIds(prevDisableIds => prevDisableIds.filter(id => id !== topicId));
+            setDisabledTopicIds(prevDisableIds => prevDisableIds.filter(id => id !== topicId));
         }
+    };
+
+    const handleComment = (topicId: string) => {
+
+        if (!updatedGalleryData)
+            return;
+
+        commentModal.showCommentModal(topicId);
     };
 
     const renderContent = () => {
@@ -120,7 +121,8 @@ const GalleryPage = ({ galleryData, hasError }: Props) => {
                 images={updatedGalleryData}
                 onLikeClick={(id) => handleLikeDislike(id, true)}
                 onDislikeClick={(id) => handleLikeDislike(id, false)}
-                disabledTopicIds={disableTopicIds}
+                onCommentClick={handleComment}
+                disabledTopicIds={disabledTopicIds}
             />
         );
     };
