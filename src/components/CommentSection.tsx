@@ -1,6 +1,6 @@
 import { FaChevronDown, FaChevronUp, FaHeart, FaRegComment, FaReply, FaThumbsDown, FaTrash } from 'react-icons/fa';
 import { getTimeSinceDate } from '@/lib/dateUtility';
-import React, {useState } from 'react';
+import React, { useState } from 'react';
 import { CommentType } from '@/type/comment';
 import { useSession } from 'next-auth/react';
 import ImageLoader from './ImageLoader';
@@ -62,18 +62,20 @@ export const CommentSection = ({ comment, ...actions }: { comment: CommentSectio
                         <ExpandIcon />
 
                         <button
-                            className={`inline-flex items-center cursor-pointer gap-1 ml-2 ${comment.likedBySessionUser ? 'text-like-800' : 'text-primary-800'
+                            className={`inline-flex items-center ${session && 'cursor-pointer'} gap-1 ml-2 ${comment.likedBySessionUser ? 'text-like-800' : 'text-primary-800'
                                 } hover:animate-pulse ${comment.likedBySessionUser ? 'hover:text-like-900' : 'hover:text-primary-900'
                                 }`}
+                            disabled={!session}
                             onClick={handleLikeClick}
                         >
                             <FaHeart />
                             <span>{comment.likes}</span>
                         </button>
                         <button
-                            className={`inline-flex items-center cursor-pointer gap-1 ${comment.dislikedBySessionUser ? 'text-paper' : 'text-primary-800'
+                            className={`inline-flex items-center ${session && 'cursor-pointer'} gap-1 ${comment.dislikedBySessionUser ? 'text-paper' : 'text-primary-800'
                                 } hover:animate-pulse hover:text-primary-900`}
                             onClick={handleDislikeClick}
+                            disabled={!session}
 
                         >
                             <FaThumbsDown />
@@ -84,19 +86,21 @@ export const CommentSection = ({ comment, ...actions }: { comment: CommentSectio
                             <span>0</span>
                         </span>
                         {session &&
-                            <button className='ml-4 cursor-pointer text-primary-800 hover:animate-pulse hover:text-primary-900'
-                                onClick={handleReplyClick}
-                            >
-                                <FaReply />
-                            </button>
-                        }
-                        {comment.commentedBySessionUser &&
-                            <button className='ml-2 cursor-pointer text-primary-800 hover:animate-pulse hover:text-primary-900'
-                                onClick={handleDeleteClick}
+                            <>
+                                <button className='ml-4 cursor-pointer text-primary-800 hover:animate-pulse hover:text-primary-900'
+                                    onClick={handleReplyClick}
+                                >
+                                    <FaReply />
+                                </button>
+                                {comment.commentedBySessionUser &&
+                                    <button className='ml-2 cursor-pointer text-primary-800 hover:animate-pulse hover:text-primary-900'
+                                        onClick={handleDeleteClick}
 
-                            >
-                                <FaTrash />
-                            </button>
+                                    >
+                                        <FaTrash />
+                                    </button>
+                                }
+                            </>
                         }
                     </div>
                 </div>

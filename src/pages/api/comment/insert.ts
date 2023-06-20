@@ -50,7 +50,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             likes: 0,
             dislikes: 0,
             likedBySessionUser: false,
-            commentedBySessionUser: false,
+            commentedBySessionUser: true,
             dislikedBySessionUser: false,
             userName: comment.user?.name,
             image: comment.user?.image,
