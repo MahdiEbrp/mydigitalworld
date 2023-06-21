@@ -46,7 +46,7 @@ const useCommentData = (topicId: string) => {
     const updateComment = async (id: string, action: 'like' | 'dislike' | 'delete') => {
         try {
             if (action === 'delete') {
-                mutate((prevState) => prevState?.filter((comment) => comment.id !== id));
+                mutate((prevState) => prevState?.filter((comment) => comment.id !== id),false);
             } else {
                 const updatedComments = commentData?.map((comment) => {
                     if (comment.id === id) {
