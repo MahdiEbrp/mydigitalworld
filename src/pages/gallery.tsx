@@ -9,7 +9,7 @@ import React, { useEffect, useState } from 'react';
 import { GetServerSidePropsContext } from 'next';
 import { useToast } from '@/context/ToastContext';
 import { Gallery } from '@/type/gallery';
-import useGalleryData from '@/lib/useGalleryData';
+import useGalleryData from '@/helpers/useGalleryData';
 import { useCommentModal } from '@/context/CommentContext';
 
 type LikeResponse = {

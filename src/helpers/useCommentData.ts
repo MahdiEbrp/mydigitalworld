@@ -1,6 +1,6 @@
 import axios from 'axios';
 import useSWR from 'swr';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { CommentType } from '@/type/comment';
 
@@ -22,13 +22,18 @@ const useCommentData = (topicId: string) => {
         (url) => fetchComments(url, topicId),
     );
     const [isUpdating, setUpdating] = useState<boolean>(false);
+    const [cachedVersion, setCachedVersion] = useState<CommentType[]>([]);
 
+    useEffect(() => {
+        if (!error)
+            setCachedVersion(commentData || []);
+    },[commentData, error]);
 
-    const insertComment = async (opinion: string) => {
+    const insertComment = async (opinion: string,parentId?:string) => {
         try {
             setUpdating(true);
 
-            const { data: response } = await axios.post<CommentType>(INSERT_COMMENTS_API_ROUTE, { opinion, topicId });
+            const { data: response } = await axios.post<CommentType>(INSERT_COMMENTS_API_ROUTE, { opinion, topicId,parentId });
             mutate([...commentData || [], response], false);
             return undefined;
         } catch (error) {
@@ -63,7 +68,6 @@ const useCommentData = (topicId: string) => {
                 mutate([...updatedComments], false);
 
             }
-
             const { data: response } = await axios.post<CommentType>(UPDATE_COMMENTS_API_ROUTE, { id, action });
             mutate(prevState => response ? prevState?.map(comment => comment.id === response.id ? response : comment) : prevState, false);
 
@@ -73,7 +77,7 @@ const useCommentData = (topicId: string) => {
         }
     };
 
-    return { commentData, isLoading :isUpdating || isLoading, error, insertComment, updateComment };
+    return { commentData: cachedVersion, isLoading :isUpdating || isLoading, error, insertComment, updateComment };
 };
 
 export default useCommentData;

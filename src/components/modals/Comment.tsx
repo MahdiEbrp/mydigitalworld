@@ -3,7 +3,7 @@ import Loader from '../display/Loader';
 import React, { useRef, useState } from 'react';
 import { AxiosError } from 'axios';
 import getHumorousHTTPMessage from '@/lib/humorousHTTPMessage';
-import useCommentData from '@/lib/useCommentData';
+import useCommentData from '@/helpers/useCommentData';
 import { CommentSection } from '../CommentSection';
 import { HiOutlineRefresh } from 'react-icons/hi';
 import { useSession } from 'next-auth/react';
@@ -19,7 +19,7 @@ type Parent = {
 };
 
 const Comments = ({ topicId }: { topicId: string; }) => {
-    const [parent, setParent] = useState<Parent | null>(null);
+    const [parent, setParent] = useState<Parent | undefined>(undefined);
     const inputRef = useRef<HTMLTextAreaElement>(null);
     const { commentData, isLoading, error, insertComment, updateComment } = useCommentData(topicId);
     const { data: session, status } = useSession();
@@ -45,7 +45,7 @@ const Comments = ({ topicId }: { topicId: string; }) => {
             showToast('Comment should not be empty. 😱 Fill it with your deepest, darkest secrets! Just kidding... please don\'t do that. 😂', 'warning', 4000);
             return;
         }
-        const error = await insertComment(opinion);
+        const error = await insertComment(opinion,parent?.id);
         if (error) {
             if (error instanceof AxiosError)
                 showToast(getHumorousHTTPMessage(error.response?.status || 0), 'error', 4000);
@@ -86,7 +86,7 @@ const Comments = ({ topicId }: { topicId: string; }) => {
                     <div className='inline-flex gap-1'>
                         <span>Reply to:</span>
                         {parent ?
-                            <Chip showIcon title={parent.userName} onRemove={() => setParent(null)} />
+                            <Chip showIcon title={parent.userName} onRemove={() => setParent(undefined)} />
                             :
                             <span> No one.😎</span>
                         }
