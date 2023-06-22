@@ -12,12 +12,7 @@ import { Gallery } from '@/type/gallery';
 import useGalleryData from '@/helpers/useGalleryData';
 import { useCommentModal } from '@/context/CommentContext';
 
-type LikeResponse = {
-    likes: number,
-    dislikes: number,
-    likedBySessionUser: boolean,
-    dislikedBySessionUser: boolean;
-};
+
 
 type Props = {
     galleryData: Gallery[];
@@ -27,7 +22,7 @@ type Props = {
 const GalleryPage = ({ galleryData, hasError }: Props) => {
     const [updatedGalleryData, setUpdatedGalleryData] = useState<Gallery[]>(galleryData ?? []);
     const [disabledTopicIds, setDisabledTopicIds] = useState<string[]>([]);
-    const { galleryData: galleryDataFromApi } = useGalleryData();
+    const { galleryData: galleryDataFromApi, updateGallery } = useGalleryData();
     const commentModal = useCommentModal();
     const toast = useToast();
 
@@ -48,47 +43,12 @@ const GalleryPage = ({ galleryData, hasError }: Props) => {
             return;
 
         setDisabledTopicIds(prevDisableIds => [...prevDisableIds, topicId]);
+        const currentTopic = updatedGalleryData.find(image => image.topicId === topicId);
+        if (!currentTopic?.likedBySessionUser && isLike)
+            toast.showToast('🥰 Aww, you liked my post! Thank you so much! 🙌', 'success', 2000);
+        const error = await updateGallery(topicId, isLike);
 
-        try {
-            const newGalleryData = updatedGalleryData.map((image) => {
-                if (image.topicId === topicId) {
-                    const alreadyLiked = image.likedBySessionUser;
-                    const alreadyDisliked = image.dislikedBySessionUser;
-                    image.likes += alreadyLiked ? -1 : isLike ? 1 : 0;
-                    image.dislikes += alreadyDisliked ? -1 : !isLike ? 1 : 0;
-                    image.likedBySessionUser = !alreadyLiked && isLike;
-                    image.dislikedBySessionUser = !alreadyDisliked && !isLike;
-
-                    if (image.likedBySessionUser) {
-                        toast.showToast('🥰 Aww, you liked my post! Thank you so much! 🙌', 'success', 2000);
-                    }
-                }
-
-                return image;
-            });
-
-            setUpdatedGalleryData(newGalleryData);
-
-            const { data: response } = await axios.post<LikeResponse>('/api/like/update', { isLike, topicId });
-
-            const updatedData = newGalleryData.map((image) => {
-                if (image.topicId === topicId) {
-                    return {
-                        ...image,
-                        likes: response.likes,
-                        dislikes: response.dislikes,
-                        likedBySessionUser: response.likedBySessionUser,
-                        dislikedBySessionUser: response.dislikedBySessionUser,
-                    };
-                }
-
-                return image;
-            });
-
-            setUpdatedGalleryData(updatedData);
-
-        } catch (error) {
-
+        if (error) {
             if (error instanceof AxiosError)
                 toast.showToast(getHumorousHTTPMessage(error.response?.status || 0), 'error', 4000);
             else
@@ -96,9 +56,8 @@ const GalleryPage = ({ galleryData, hasError }: Props) => {
 
             setUpdatedGalleryData(galleryData ?? []);
         }
-        finally {
-            setDisabledTopicIds(prevDisableIds => prevDisableIds.filter(id => id !== topicId));
-        }
+
+        setDisabledTopicIds(prevDisableIds => prevDisableIds.filter(id => id !== topicId));
     };
 
     const handleComment = (topicId: string) => {

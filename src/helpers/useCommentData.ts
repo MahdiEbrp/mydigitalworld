@@ -52,8 +52,8 @@ const useCommentData = (topicId: string) => {
                     if (comment.id === id) {
                         const likedBySessionUser = comment.likedBySessionUser;
                         const dislikedBySessionUser = comment.dislikedBySessionUser;
-                        const likes = likedBySessionUser ? comment.likes - 1 : comment.likes + 1;
-                        const dislikes = dislikedBySessionUser ? comment.dislikes - 1 : comment.dislikes + 1;
+                        const likes = likedBySessionUser ? comment.likes - 1 : action === 'like' ?  comment.likes + 1 : comment.likes;
+                        const dislikes = dislikedBySessionUser ? comment.dislikes - 1 : action === 'dislike' ? comment.dislikes + 1 : comment.dislikes;
 
                         if (action === 'like') {
                             return { ...comment, likes, dislikes, likedBySessionUser: !likedBySessionUser, dislikedBySessionUser: false };
