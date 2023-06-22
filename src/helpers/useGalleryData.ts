@@ -23,14 +23,6 @@ type LikeResponse = {
 const useGalleryData = () => {
     const { data: galleryData = [], error, isLoading, mutate } = useSWR<Gallery[]>(GALLERY_API_ROUTE, fetcher);
 
-    const [cachedVersion, setCachedVersion] = useState<Gallery[]>([]);
-
-    useEffect(() => {
-        if (!error) {
-            setCachedVersion(galleryData);
-        }
-    }, [galleryData, error]);
-
     const updateGallery = async (topicId: string, isLike: boolean) => {
         try {
             let newGalleryData = galleryData.map((image) => {
@@ -61,7 +53,7 @@ const useGalleryData = () => {
         }
     };
 
-    return { galleryData: cachedVersion, isLoading, error, updateGallery };
+    return { galleryData, isLoading, error, updateGallery };
 };
 
 export default useGalleryData;

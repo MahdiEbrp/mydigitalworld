@@ -22,12 +22,6 @@ const useCommentData = (topicId: string) => {
         (url) => fetchComments(url, topicId),
     );
     const [isUpdating, setUpdating] = useState<boolean>(false);
-    const [cachedVersion, setCachedVersion] = useState<CommentType[]>([]);
-
-    useEffect(() => {
-        if (!error)
-            setCachedVersion(commentData || []);
-    },[commentData, error]);
 
     const insertComment = async (opinion: string,parentId?:string) => {
         try {
@@ -77,7 +71,7 @@ const useCommentData = (topicId: string) => {
         }
     };
 
-    return { commentData: cachedVersion, isLoading :isUpdating || isLoading, error, insertComment, updateComment };
+    return { commentData, isLoading :isUpdating || isLoading, error, insertComment, updateComment };
 };
 
 export default useCommentData;

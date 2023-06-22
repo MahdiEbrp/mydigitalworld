@@ -5,7 +5,7 @@ import Loader from '@/components/display/Loader';
 import NothingToSee from '@/components/display/NothingToSee';
 import axios, { AxiosError } from 'axios';
 import getHumorousHTTPMessage from '@/lib/humorousHTTPMessage';
-import React, { useEffect, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { GetServerSidePropsContext } from 'next';
 import { useToast } from '@/context/ToastContext';
 import { Gallery } from '@/type/gallery';
@@ -15,30 +15,21 @@ import { useCommentModal } from '@/context/CommentContext';
 
 
 type Props = {
-    galleryData: Gallery[];
+    serverData: Gallery[];
     hasError: boolean;
 };
 
-const GalleryPage = ({ galleryData, hasError }: Props) => {
-    const [updatedGalleryData, setUpdatedGalleryData] = useState<Gallery[]>(galleryData ?? []);
+const GalleryPage = ({ serverData, hasError }: Props) => {
     const [disabledTopicIds, setDisabledTopicIds] = useState<string[]>([]);
-    const { galleryData: galleryDataFromApi, updateGallery } = useGalleryData();
+    const { galleryData: galleryDataFromApi, updateGallery, isLoading } = useGalleryData();
     const commentModal = useCommentModal();
     const toast = useToast();
 
-    useEffect(() => {
-        if (galleryData) {
-            setUpdatedGalleryData(galleryData);
-        }
-    }, [galleryData]);
-    useEffect(() => {
-        if (galleryDataFromApi) {
-            setUpdatedGalleryData(galleryDataFromApi);
-        }
-    }, [galleryDataFromApi]);
+    const updatedGalleryData = useMemo(() => {
+        return isLoading ? serverData : galleryDataFromApi;
+    }, [isLoading, galleryDataFromApi, serverData]);
 
     const handleLikeDislike = async (topicId: string, isLike: boolean) => {
-
         if (!updatedGalleryData)
             return;
 
@@ -54,7 +45,6 @@ const GalleryPage = ({ galleryData, hasError }: Props) => {
             else
                 toast.showToast('Seriously, doesn\'t know what\'s happening.🧐👻', 'error', 2000);
 
-            setUpdatedGalleryData(galleryData ?? []);
         }
 
         setDisabledTopicIds(prevDisableIds => prevDisableIds.filter(id => id !== topicId));
@@ -109,14 +99,14 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
         });
         return {
             props: {
-                galleryData: data,
+                serverData: data,
                 hasError: false,
             },
         };
     } catch (error) {
         return {
             props: {
-                galleryData: [],
+                serverData: [],
                 hasError: true,
             },
         };
