@@ -1,7 +1,6 @@
 import axios from 'axios';
 import useSWR from 'swr';
 import { Gallery } from '@/type/gallery';
-import { useEffect, useState } from 'react';
 
 const GALLERY_API_ROUTE = `${process.env.NEXT_PUBLIC_HOST}/api/gallery`;
 const UPDATE_GALLERY_API_ROUTE = `${process.env.NEXT_PUBLIC_HOST}/api/like/update`;

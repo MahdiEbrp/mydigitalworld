@@ -1,6 +1,6 @@
 import axios from 'axios';
 import useSWR from 'swr';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { CommentType } from '@/type/comment';
 
