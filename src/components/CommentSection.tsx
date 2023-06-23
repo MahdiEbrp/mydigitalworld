@@ -17,6 +17,7 @@ type CommentSectionProps = Omit<CommentType, keyof CommentActions> & Partial<Com
 
 export const CommentSection = ({ comment, ...actions }: { comment: CommentSectionProps; } & CommentActions) => {
 
+
     const { onDeleteComment, onReplyComment, onLikeComment, onDislikeComment } = actions;
 
     const [isExpanded, setIsExpanded] = useState(false);
@@ -126,13 +127,15 @@ export const CommentSection = ({ comment, ...actions }: { comment: CommentSectio
                 className={`transition-all duration-500 rounded-b-lg ${isExpanded ? 'max-h-[100rem]' : 'max-h-0'
                     }`}
             >
-                {comment.replies &&
-                    <div className='px-4 pt-2 pb-4'>
+                <div className='px-4 pt-2 pb-4'>
+                    {comment.replies && comment.replies.map((reply)=>
 
-                        children mate!
-                    </div>
+                        <CommentSection key={reply.id} comment={reply} onLikeComment={handleLikeClick} onDislikeComment={handleDislikeClick}
+                            onDeleteComment={handleDeleteClick} onReplyComment={handleReplyClick}
+                        />
+                    )}
 
-                }
+                </div>
             </div>
         </div>
     );
