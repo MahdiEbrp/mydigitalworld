@@ -59,7 +59,7 @@ export const CommentSection = ({ comment, ...actions }: { comment: CommentSectio
             <div className='flex flex-col items-center justify-between w-full py-1 px-1 text-left focus:outline-none gap-1'>
                 <div className='inline-flex gap-1 flex-col sm:flex-row items-center mt-2'>
                     <div className='inline-flex gap-1'>
-                        <ExpandIcon />
+                        {comment.comments > 0 && <ExpandIcon />}
 
                         <button
                             className={`inline-flex items-center ${session && 'cursor-pointer'} gap-1 ml-2 ${comment.likedBySessionUser ? 'text-like-800' : 'text-primary-800'
@@ -83,7 +83,7 @@ export const CommentSection = ({ comment, ...actions }: { comment: CommentSectio
                         </button>
                         <span className='inline-flex items-center gap-1 text-primary-800'>
                             <FaRegComment />
-                            <span>0</span>
+                            <span>{comment.comments || 0}</span>
                         </span>
                         {session &&
                             <>
@@ -126,7 +126,13 @@ export const CommentSection = ({ comment, ...actions }: { comment: CommentSectio
                 className={`transition-all duration-500 rounded-b-lg ${isExpanded ? 'max-h-[100rem]' : 'max-h-0'
                     }`}
             >
-                <div className='px-4 pt-2 pb-4'></div>
+                {comment.replies &&
+                    <div className='px-4 pt-2 pb-4'>
+
+                        children mate!
+                    </div>
+
+                }
             </div>
         </div>
     );

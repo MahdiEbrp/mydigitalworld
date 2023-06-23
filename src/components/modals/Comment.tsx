@@ -1,5 +1,4 @@
 import Button from '../Button';
-import Loader from '../display/Loader';
 import React, { useRef, useState } from 'react';
 import { AxiosError } from 'axios';
 import getHumorousHTTPMessage from '@/lib/humorousHTTPMessage';
@@ -18,10 +17,21 @@ type Parent = {
     userName: string;
 };
 
+
+const LoaderWithEmoji = ({ text }: { text: string; }) => {
+    return (
+        <span className='inline-flex gap-1'>
+
+            <HiOutlineRefresh className='animate-spin' />
+            <span className='animate-bounce'>🫡</span>
+            <span>{ text}</span>
+        </span>
+    );
+};
 const Comments = ({ topicId }: { topicId: string; }) => {
     const [parent, setParent] = useState<Parent | undefined>(undefined);
     const inputRef = useRef<HTMLTextAreaElement>(null);
-    const { commentData, isLoading, error, insertComment, updateComment } = useCommentData(topicId);
+    const { commentData, status: commentStatus, error, insertComment, updateComment } = useCommentData(topicId);
     const { data: session, status } = useSession();
     const { showToast } = useToast();
     const { theme } = useTheme();
@@ -34,8 +44,8 @@ const Comments = ({ topicId }: { topicId: string; }) => {
         );
     }
 
-    if (isLoading || status === 'loading')
-        return <Loader />;
+    if (commentStatus === 'fetching' || status === 'loading')
+        return <LoaderWithEmoji text='Aye aye, Captain!, loading awesomeness at warp speed!' />;
 
     const handleSendButton = async () => {
 
@@ -45,7 +55,7 @@ const Comments = ({ topicId }: { topicId: string; }) => {
             showToast('Comment should not be empty. 😱 Fill it with your deepest, darkest secrets! Just kidding... please don\'t do that. 😂', 'warning', 4000);
             return;
         }
-        const error = await insertComment(opinion,parent?.id);
+        const error = await insertComment(opinion, parent?.id);
         if (error) {
             if (error instanceof AxiosError)
                 showToast(getHumorousHTTPMessage(error.response?.status || 0), 'error', 4000);
@@ -64,16 +74,11 @@ const Comments = ({ topicId }: { topicId: string; }) => {
             </div>
         );
     };
+
     const ReplayBox = () => {
 
-        if (isLoading)
-            return (
-                <span className='inline-flex gap-1'>
-
-                    <HiOutlineRefresh className='animate-spin' />
-                    <span>🫡 Aye aye, Captain! I&apos;m updating the comments as quickly as possible!</span>
-                </span>
-            );
+        if (commentStatus === 'updating')
+            return <LoaderWithEmoji text="Aye aye, Captain! Let's sail through these comments like a boss!"/>;
 
         return (
             <>
@@ -91,7 +96,7 @@ const Comments = ({ topicId }: { topicId: string; }) => {
                             <span> No one.😎</span>
                         }
                     </div>
-                    <Button disabled={isLoading} onClick={handleSendButton}>Send</Button>
+                    <Button disabled={commentStatus !== 'loaded'} onClick={handleSendButton}>Send</Button>
                 </div>
             </>
         );
@@ -118,7 +123,7 @@ const Comments = ({ topicId }: { topicId: string; }) => {
         if (!session)
             return;
 
-        const error =await updateComment(id, action);
+        const error = await updateComment(id, action);
         if (error) {
             if (error instanceof AxiosError)
                 showToast(getHumorousHTTPMessage(error.response?.status || 0), 'error', 4000);
@@ -132,7 +137,7 @@ const Comments = ({ topicId }: { topicId: string; }) => {
             <>
                 {session ? <ReplayBox /> : <UserAuthWarning />}
 
-                {!isLoading && commentData?.map((comment) =>
+                {commentStatus==='loaded' && commentData?.map((comment) =>
                     <div key={comment.id}>
                         <CommentSection comment={comment} onLikeComment={handleLikeClick} onDislikeComment={handleDislikeClick} onDeleteComment={handleDeleteClick} onReplyComment={handleReplyClick} />
                     </div>

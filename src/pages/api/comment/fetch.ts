@@ -1,3 +1,4 @@
+import { buildCommentTree } from '@/lib/structureUtility';
 import { NextApiRequest, NextApiResponse } from 'next';
 import prismaClient from '../../../lib/prismaClient';
 import { getSession } from '../auth/[...nextauth]';
@@ -25,7 +26,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         });
         const formattedComments = await Promise.all(comments.map(async (comment) => {
             const feedbacks = comment.feedbackId && await prisma.feedback.findMany({
-                where: { id: comment.feedbackId },
+                where: { id: comment.feedbackId, },
             }) || [];
             const likes = feedbacks.filter(fb => fb.isLike === true).length;
             const dislikes = feedbacks.filter(fb => fb.isLike === false).length;
@@ -33,7 +34,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             const likedBySessionUser = feedbacks.some(fb => fb.userId === userId && fb.isLike === true);
             const dislikedBySessionUser = feedbacks.some(fb => fb.userId === userId && fb.isLike === false);
             const commentedBySessionUser = comment.userId === userId;
-
             return {
                 opinion: comment.comment,
                 createdAt: comment.createdAt.toISOString(),
@@ -42,15 +42,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 topicId: comment.topicId,
                 likes: likes,
                 dislikes: dislikes,
+                comments: 0,
                 likedBySessionUser: likedBySessionUser,
                 commentedBySessionUser: commentedBySessionUser,
                 dislikedBySessionUser: dislikedBySessionUser,
                 userName: comment.user?.name,
-                image: comment.user?.image
+                image: comment.user?.image,
             };
         }));
+        const commentTree = buildCommentTree(formattedComments);
 
-        return res.status(200).json(formattedComments);
+        return res.status(200).json(commentTree);
 
     } catch (error) {
         return res.status(500).json({ error: 'Unknown error' });

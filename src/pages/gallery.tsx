@@ -13,7 +13,6 @@ import useGalleryData from '@/helpers/useGalleryData';
 import { useCommentModal } from '@/context/CommentContext';
 
 
-
 type Props = {
     serverData: Gallery[];
     hasError: boolean;
@@ -26,7 +25,7 @@ const GalleryPage = ({ serverData, hasError }: Props) => {
     const toast = useToast();
 
     const updatedGalleryData = useMemo(() => {
-        return isLoading ? serverData : galleryDataFromApi;
+        return isLoading && galleryDataFromApi.length===0 ? serverData : galleryDataFromApi;
     }, [isLoading, galleryDataFromApi, serverData]);
 
     const handleLikeDislike = async (topicId: string, isLike: boolean) => {

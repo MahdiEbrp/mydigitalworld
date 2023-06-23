@@ -1,6 +1,6 @@
 import axios from 'axios';
 import useSWR from 'swr';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { CommentType } from '@/type/comment';
 
@@ -21,11 +21,18 @@ const useCommentData = (topicId: string) => {
         topicId ? COMMENTS_API_ROUTE : null,
         (url) => fetchComments(url, topicId),
     );
-    const [isUpdating, setUpdating] = useState<boolean>(false);
+    const [status, setStatus] = useState<'fetching' | 'updating' | 'loaded'>('fetching');
+
+    useEffect(() => {
+        if (isLoading)
+            setStatus('fetching');
+        else
+            setStatus('loaded');
+    },[isLoading]);
 
     const insertComment = async (opinion: string,parentId?:string) => {
         try {
-            setUpdating(true);
+            setStatus('updating');
 
             const { data: response } = await axios.post<CommentType>(INSERT_COMMENTS_API_ROUTE, { opinion, topicId,parentId });
             mutate([...commentData || [], response], false);
@@ -33,7 +40,7 @@ const useCommentData = (topicId: string) => {
         } catch (error) {
             return error;
         } finally {
-            setUpdating(false);
+            setStatus('loaded');
         }
     };
 
@@ -71,7 +78,7 @@ const useCommentData = (topicId: string) => {
         }
     };
 
-    return { commentData, isLoading :isUpdating || isLoading, error, insertComment, updateComment };
+    return { commentData, status :status, error, insertComment, updateComment };
 };
 
 export default useCommentData;
