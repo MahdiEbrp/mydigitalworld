@@ -6,10 +6,10 @@ import { useSession } from 'next-auth/react';
 import ImageLoader from './ImageLoader';
 
 type CommentActions = {
-    onDeleteComment?: (id: string) => void;
-    onReplyComment?: (id: string, userName: string) => void;
-    onLikeComment?: (id: string) => void;
-    onDislikeComment?: (id: string) => void;
+    onDeleteComment: (id: string) => void;
+    onReplyComment: (id: string, userName: string) => void;
+    onLikeComment: (id: string) => void;
+    onDislikeComment: (id: string) => void;
 };
 
 type CommentSectionProps = Omit<CommentType, keyof CommentActions> & Partial<CommentActions>;
@@ -26,20 +26,20 @@ export const CommentSection = ({ comment, ...actions }: { comment: CommentSectio
 
     const toggleExpand = () => setIsExpanded(!isExpanded);
 
-    const handleLikeClick = () => {
-        onLikeComment?.(comment.id);
+    const handleLikeClick = (id: string) => {
+        onLikeComment(id);
     };
 
-    const handleDislikeClick = () => {
-        onDislikeComment?.(comment.id);
+    const handleDislikeClick = (id: string) => {
+        onDislikeComment(id);
     };
 
-    const handleReplyClick = () => {
-        onReplyComment?.(comment.id, comment.userName || 'Unknown user');
+    const handleReplyClick = (id: string) => {
+        onReplyComment(id, comment.userName || 'Unknown user');
     };
 
-    const handleDeleteClick = () => {
-        onDeleteComment?.(comment.id);
+    const handleDeleteClick = (id: string) => {
+        onDeleteComment(id);
     };
 
     const ExpandIcon = () => {
@@ -56,7 +56,7 @@ export const CommentSection = ({ comment, ...actions }: { comment: CommentSectio
     };
 
     return (
-        <div className='overflow-hidden w-[min(100%,100vw)]'>
+        <div className='overflow-hidden w-[min(100%,100vw)]' >
             <div className='flex flex-col items-center justify-between w-full py-1 px-1 text-left focus:outline-none gap-1'>
                 <div className='inline-flex gap-1 flex-col sm:flex-row items-center mt-2'>
                     <div className='inline-flex gap-1'>
@@ -67,7 +67,7 @@ export const CommentSection = ({ comment, ...actions }: { comment: CommentSectio
                                 } hover:animate-pulse ${comment.likedBySessionUser ? 'hover:text-like-900' : 'hover:text-primary-900'
                                 }`}
                             disabled={!session}
-                            onClick={handleLikeClick}
+                            onClick={() => handleLikeClick(comment.id)}
                         >
                             <FaHeart />
                             <span>{comment.likes}</span>
@@ -75,7 +75,7 @@ export const CommentSection = ({ comment, ...actions }: { comment: CommentSectio
                         <button
                             className={`inline-flex items-center ${session && 'cursor-pointer'} gap-1 ${comment.dislikedBySessionUser ? 'text-paper' : 'text-primary-800'
                                 } hover:animate-pulse hover:text-primary-900`}
-                            onClick={handleDislikeClick}
+                            onClick={() => handleDislikeClick(comment.id)}
                             disabled={!session}
 
                         >
@@ -89,13 +89,13 @@ export const CommentSection = ({ comment, ...actions }: { comment: CommentSectio
                         {session &&
                             <>
                                 <button className='ml-4 cursor-pointer text-primary-800 hover:animate-pulse hover:text-primary-900'
-                                    onClick={handleReplyClick}
+                                    onClick={() => handleReplyClick(comment.id)}
                                 >
                                     <FaReply />
                                 </button>
                                 {comment.commentedBySessionUser &&
                                     <button className='ml-2 cursor-pointer text-primary-800 hover:animate-pulse hover:text-primary-900'
-                                        onClick={handleDeleteClick}
+                                        onClick={() => handleDeleteClick(comment.id)}
 
                                     >
                                         <FaTrash />
@@ -128,7 +128,7 @@ export const CommentSection = ({ comment, ...actions }: { comment: CommentSectio
                     }`}
             >
                 <div className='px-4 pt-2 pb-4'>
-                    {comment.replies && comment.replies.map((reply)=>
+                    {comment.replies && comment.replies.map((reply) =>
 
                         <CommentSection key={reply.id} comment={reply} onLikeComment={handleLikeClick} onDislikeComment={handleDislikeClick}
                             onDeleteComment={handleDeleteClick} onReplyComment={handleReplyClick}

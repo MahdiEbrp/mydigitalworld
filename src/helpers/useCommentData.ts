@@ -34,7 +34,7 @@ const useCommentData = (topicId: string) => {
         try {
             setStatus('updating');
 
-            const { data: response } = await axios.post<CommentType>(INSERT_COMMENTS_API_ROUTE, { opinion, topicId,parentId });
+            const { data: response } = await axios.post<CommentType>(INSERT_COMMENTS_API_ROUTE, { opinion, topicId, parentId });
             mutate([...commentData || [], response], false);
             return undefined;
         } catch (error) {

@@ -1,5 +1,5 @@
 import Button from '../Button';
-import React, { useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { AxiosError } from 'axios';
 import getHumorousHTTPMessage from '@/lib/humorousHTTPMessage';
 import useCommentData from '@/helpers/useCommentData';
@@ -9,6 +9,7 @@ import { useSession } from 'next-auth/react';
 import { useTheme } from '@/context/Theme';
 import { useToast } from '@/context/ToastContext';
 import Chip from '../Chip';
+import { buildCommentTree } from '@/lib/structureUtility';
 
 const INPUT_ROWS = 3;
 
@@ -24,7 +25,7 @@ const LoaderWithEmoji = ({ text }: { text: string; }) => {
 
             <HiOutlineRefresh className='animate-spin' />
             <span className='animate-bounce'>🫡</span>
-            <span>{ text}</span>
+            <span>{text}</span>
         </span>
     );
 };
@@ -35,6 +36,10 @@ const Comments = ({ topicId }: { topicId: string; }) => {
     const { data: session, status } = useSession();
     const { showToast } = useToast();
     const { theme } = useTheme();
+
+    const structuredData = useMemo(() => {
+        return buildCommentTree(commentData || []);
+    }, [commentData]);
 
     if (error) {
         return (
@@ -74,11 +79,10 @@ const Comments = ({ topicId }: { topicId: string; }) => {
             </div>
         );
     };
-
     const ReplayBox = () => {
 
         if (commentStatus === 'updating')
-            return <LoaderWithEmoji text="Aye aye, Captain! Let's sail through these comments like a boss!"/>;
+            return <LoaderWithEmoji text="Aye aye, Captain! Let's sail through these comments like a boss!" />;
 
         return (
             <>
@@ -137,7 +141,7 @@ const Comments = ({ topicId }: { topicId: string; }) => {
             <>
                 {session ? <ReplayBox /> : <UserAuthWarning />}
 
-                {commentStatus==='loaded' && commentData?.map((comment) =>
+                {commentStatus === 'loaded' && structuredData.map((comment) =>
                     <div key={comment.id}>
                         <CommentSection comment={comment} onLikeComment={handleLikeClick} onDislikeComment={handleDislikeClick} onDeleteComment={handleDeleteClick} onReplyComment={handleReplyClick} />
                     </div>

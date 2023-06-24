@@ -1,4 +1,3 @@
-import { buildCommentTree } from '@/lib/structureUtility';
 import { NextApiRequest, NextApiResponse } from 'next';
 import prismaClient from '../../../lib/prismaClient';
 import { getSession } from '../auth/[...nextauth]';
@@ -50,9 +49,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 image: comment.user?.image,
             };
         }));
-        const commentTree = buildCommentTree(formattedComments);
-
-        return res.status(200).json(commentTree);
+        return res.status(200).json(formattedComments);
 
     } catch (error) {
         return res.status(500).json({ error: 'Unknown error' });
