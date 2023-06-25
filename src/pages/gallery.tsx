@@ -12,7 +12,6 @@ import { Gallery } from '@/type/gallery';
 import useGalleryData from '@/helpers/useGalleryData';
 import { useCommentModal } from '@/context/CommentContext';
 
-
 type Props = {
     serverData: Gallery[];
     hasError: boolean;
@@ -20,13 +19,14 @@ type Props = {
 
 const GalleryPage = ({ serverData, hasError }: Props) => {
     const [disabledTopicIds, setDisabledTopicIds] = useState<string[]>([]);
-    const { galleryData: galleryDataFromApi, updateGallery, isLoading } = useGalleryData();
-    const commentModal = useCommentModal();
+    const { galleryData: galleryDataFromApi, updateGallery, isLoading, mutate } = useGalleryData();
+    const { showCommentModal } = useCommentModal();
     const toast = useToast();
 
     const updatedGalleryData = useMemo(() => {
-        return isLoading && galleryDataFromApi.length===0 ? serverData : galleryDataFromApi;
+        return isLoading && galleryDataFromApi.length === 0 ? serverData : galleryDataFromApi;
     }, [isLoading, galleryDataFromApi, serverData]);
+
 
     const handleLikeDislike = async (topicId: string, isLike: boolean) => {
         if (!updatedGalleryData)
@@ -36,7 +36,7 @@ const GalleryPage = ({ serverData, hasError }: Props) => {
         const currentTopic = updatedGalleryData.find(image => image.topicId === topicId);
         if (!currentTopic?.likedBySessionUser && isLike)
             toast.showToast('🥰 Aww, you liked my post! Thank you so much! 🙌', 'success', 2000);
-        const error = await updateGallery(topicId, isLike);
+        const { error } = await updateGallery(topicId, isLike);
 
         if (error) {
             if (error instanceof AxiosError)
@@ -49,12 +49,19 @@ const GalleryPage = ({ serverData, hasError }: Props) => {
         setDisabledTopicIds(prevDisableIds => prevDisableIds.filter(id => id !== topicId));
     };
 
-    const handleComment = (topicId: string) => {
+    const handleComment = async (topicId: string) => {
 
         if (!updatedGalleryData)
             return;
-
-        commentModal.showCommentModal(topicId);
+        const count = await showCommentModal(topicId);
+        await mutate(
+            updatedGalleryData.map(image => {
+                if (image.topicId === topicId) {
+                    image.comments = count;
+                }
+                return image;
+            })
+            , false);
     };
 
     const renderContent = () => {

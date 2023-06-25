@@ -10,6 +10,8 @@ export const buildCommentTree = (comments: CommentType[]): CommentType[] => {
     const commentTree: CommentType[] = [];
     for (const comment of Object.values(commentMap)) {
         const parent = commentMap[comment.parentId ?? ''];
+        if (comment.parentId && !parent)
+            continue;
         if (parent) {
             parent.comments++;
             parent.replies?.push(comment);

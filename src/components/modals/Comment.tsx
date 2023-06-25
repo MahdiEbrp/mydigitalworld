@@ -1,23 +1,26 @@
 import Button from '../Button';
-import React, { useMemo, useRef, useState } from 'react';
-import { AxiosError } from 'axios';
+import Chip from '../Chip';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import getHumorousHTTPMessage from '@/lib/humorousHTTPMessage';
 import useCommentData from '@/helpers/useCommentData';
+import { AxiosError } from 'axios';
 import { CommentSection } from '../CommentSection';
 import { HiOutlineRefresh } from 'react-icons/hi';
+import { buildCommentTree } from '@/lib/structureUtility';
 import { useSession } from 'next-auth/react';
 import { useTheme } from '@/context/Theme';
 import { useToast } from '@/context/ToastContext';
-import Chip from '../Chip';
-import { buildCommentTree } from '@/lib/structureUtility';
 
 const INPUT_ROWS = 3;
 
-type Parent = {
+type ResponseTarget = {
     id: string;
     userName: string;
 };
-
+type CommentProps = {
+    topicId: string;
+    onCountChange: (count:number) => void;
+};
 
 const LoaderWithEmoji = ({ text }: { text: string; }) => {
     return (
@@ -29,17 +32,24 @@ const LoaderWithEmoji = ({ text }: { text: string; }) => {
         </span>
     );
 };
-const Comments = ({ topicId }: { topicId: string; }) => {
-    const [parent, setParent] = useState<Parent | undefined>(undefined);
+const Comments = ({ topicId,onCountChange }: CommentProps) => {
+
+    const [responseTarget, setResponseTarget] = useState<ResponseTarget | undefined>(undefined);
     const inputRef = useRef<HTMLTextAreaElement>(null);
     const { commentData, status: commentStatus, error, insertComment, updateComment } = useCommentData(topicId);
     const { data: session, status } = useSession();
     const { showToast } = useToast();
     const { theme } = useTheme();
 
-    const structuredData = useMemo(() => {
+    const commentTree = useMemo(() => {
         return buildCommentTree(commentData || []);
     }, [commentData]);
+
+    useEffect(() => {
+        if (commentData && commentStatus === 'loaded')
+            onCountChange(commentData.length);
+    }, [commentData, commentStatus, onCountChange]);
+
 
     if (error) {
         return (
@@ -49,8 +59,11 @@ const Comments = ({ topicId }: { topicId: string; }) => {
         );
     }
 
+
     if (commentStatus === 'fetching' || status === 'loading')
         return <LoaderWithEmoji text='Aye aye, Captain!, loading awesomeness at warp speed!' />;
+
+
 
     const handleSendButton = async () => {
 
@@ -60,7 +73,8 @@ const Comments = ({ topicId }: { topicId: string; }) => {
             showToast('Comment should not be empty. 😱 Fill it with your deepest, darkest secrets! Just kidding... please don\'t do that. 😂', 'warning', 4000);
             return;
         }
-        const error = await insertComment(opinion, parent?.id);
+        const { error } = await insertComment(opinion, responseTarget?.id);
+
         if (error) {
             if (error instanceof AxiosError)
                 showToast(getHumorousHTTPMessage(error.response?.status || 0), 'error', 4000);
@@ -94,8 +108,8 @@ const Comments = ({ topicId }: { topicId: string; }) => {
                 <div className='flex items-center self-stretch justify-between'>
                     <div className='inline-flex gap-1'>
                         <span>Reply to:</span>
-                        {parent ?
-                            <Chip showIcon title={parent.userName} onRemove={() => setParent(undefined)} />
+                        {responseTarget ?
+                            <Chip showIcon title={responseTarget.userName} onRemove={() => setResponseTarget(undefined)} />
                             :
                             <span> No one.😎</span>
                         }
@@ -115,7 +129,7 @@ const Comments = ({ topicId }: { topicId: string; }) => {
     };
 
     const handleReplyClick = (id: string, userName: string) => {
-        setParent({ id, userName });
+        setResponseTarget({ id, userName });
     };
 
     const handleDeleteClick = (id: string) => {
@@ -127,7 +141,7 @@ const Comments = ({ topicId }: { topicId: string; }) => {
         if (!session)
             return;
 
-        const error = await updateComment(id, action);
+        const { error } = await updateComment(id, action);
         if (error) {
             if (error instanceof AxiosError)
                 showToast(getHumorousHTTPMessage(error.response?.status || 0), 'error', 4000);
@@ -141,7 +155,7 @@ const Comments = ({ topicId }: { topicId: string; }) => {
             <>
                 {session ? <ReplayBox /> : <UserAuthWarning />}
 
-                {commentStatus === 'loaded' && structuredData.map((comment) =>
+                {commentStatus === 'loaded' && commentTree.map((comment) =>
                     <div key={comment.id}>
                         <CommentSection comment={comment} onLikeComment={handleLikeClick} onDislikeComment={handleDislikeClick} onDeleteComment={handleDeleteClick} onReplyComment={handleReplyClick} />
                     </div>

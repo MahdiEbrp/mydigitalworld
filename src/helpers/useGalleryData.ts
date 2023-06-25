@@ -26,12 +26,12 @@ const useGalleryData = () => {
         try {
             let newGalleryData = galleryData.map((image) => {
                 if (image.topicId === topicId) {
-                    const alreadyLiked = image.likedBySessionUser;
-                    const alreadyDisliked = image.dislikedBySessionUser;
-                    image.likes += alreadyLiked ? -1 : isLike ? 1 : 0;
-                    image.dislikes += alreadyDisliked ? -1 : !isLike ? 1 : 0;
-                    image.likedBySessionUser = !alreadyLiked && isLike;
-                    image.dislikedBySessionUser = !alreadyDisliked && !isLike;
+                    const isAlreadyLiked = image.likedBySessionUser;
+                    const isAlreadyDisliked = image.dislikedBySessionUser;
+                    image.likes += isAlreadyLiked ? -1 : isLike ? 1 : 0;
+                    image.dislikes += isAlreadyDisliked ? -1 : !isLike ? 1 : 0;
+                    image.likedBySessionUser = !isAlreadyLiked && isLike;
+                    image.dislikedBySessionUser = !isAlreadyDisliked && !isLike;
                 }
                 return image;
             });
@@ -46,13 +46,13 @@ const useGalleryData = () => {
                 return image;
             });
             mutate(newGalleryData, false);
-            return undefined;
+            return {error:undefined};
         } catch (error) {
-            return error;
+            return {error:error};
         }
     };
 
-    return { galleryData, isLoading, error, updateGallery };
+    return { galleryData, isLoading, error, updateGallery,mutate };
 };
 
 export default useGalleryData;

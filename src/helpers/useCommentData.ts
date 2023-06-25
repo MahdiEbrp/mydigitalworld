@@ -36,9 +36,9 @@ const useCommentData = (topicId: string) => {
 
             const { data: response } = await axios.post<CommentType>(INSERT_COMMENTS_API_ROUTE, { opinion, topicId, parentId });
             mutate([...commentData || [], response], false);
-            return undefined;
+            return {error:undefined};
         } catch (error) {
-            return error;
+            return {error:error};
         } finally {
             setStatus('loaded');
         }
@@ -72,13 +72,13 @@ const useCommentData = (topicId: string) => {
             const { data: response } = await axios.post<CommentType>(UPDATE_COMMENTS_API_ROUTE, { id, action });
             mutate(prevState => response ? prevState?.map(comment => comment.id === response.id ? response : comment) : prevState, false);
 
-            return undefined;
+            return { error: undefined };
         } catch (error) {
-            return error;
+            return { error: error };
         }
     };
 
-    return { commentData, status :status, error, insertComment, updateComment };
+    return { commentData, status, error, insertComment, updateComment };
 };
 
 export default useCommentData;
