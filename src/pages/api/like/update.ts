@@ -51,15 +51,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 fb.isLike = feedback.isLike;
             }
         });
+        const updatedFeedbacks = [...feedbacks.filter(fb => fb.id !== feedback?.id || ''), feedback];
 
-        const { likes, dislikes } = feedbacks.reduce((counts, fb) => {
+        const { likes, dislikes } = updatedFeedbacks.reduce((counts, fb) => {
             if (fb.isLike === true) counts.likes++;
             else if (fb.isLike === false) counts.dislikes++;
             return counts;
         }, { likes: 0, dislikes: 0 });
 
-        const likedBySessionUser = feedbacks.some(fb => fb.userId === userId && fb.isLike === true);
-        const dislikedBySessionUser = feedbacks.some(fb => fb.userId === userId && fb.isLike === false);
+        const likedBySessionUser = updatedFeedbacks.some(fb => fb.userId === userId && fb.isLike === true);
+        const dislikedBySessionUser = updatedFeedbacks.some(fb => fb.userId === userId && fb.isLike === false);
 
         return res.status(200).json({ likes, dislikes, likedBySessionUser, dislikedBySessionUser });
 
