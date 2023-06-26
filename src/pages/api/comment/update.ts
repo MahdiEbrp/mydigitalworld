@@ -51,7 +51,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const commentedBySessionUser = true;
 
         if (!comment.feedback) {
-            const topic = await prisma.topic.create({ data: { userId } });
+            const topic = await prisma.topic.create({ data: { userId,description:'COMMENT_TOPIC' } });
             const feedback = await prisma.feedback.create({
                 data: {
                     topicId: topic.id,

@@ -78,6 +78,7 @@ const GalleryPage = ({ serverData, hasError }: Props) => {
                 onDislikeClick={(id) => handleLikeDislike(id, false)}
                 onCommentClick={handleComment}
                 disabledTopicIds={disabledTopicIds}
+                suppressHydrationWarning
             />
         );
     };
