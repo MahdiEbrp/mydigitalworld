@@ -5,12 +5,14 @@ import Loader from '@/components/display/Loader';
 import NothingToSee from '@/components/display/NothingToSee';
 import axios, { AxiosError } from 'axios';
 import getHumorousHTTPMessage from '@/lib/humorousHTTPMessage';
-import React, { useMemo, useState } from 'react';
+import React, { useContext, useMemo, useState } from 'react';
 import { GetServerSidePropsContext } from 'next';
 import { useToast } from '@/context/ToastContext';
 import { Gallery } from '@/type/gallery';
 import useGalleryData from '@/helpers/useGalleryData';
 import { useCommentModal } from '@/context/CommentContext';
+import { useSession } from 'next-auth/react';
+import { SignInModalContext } from '@/context/SignInContext';
 
 type Props = {
     serverData: Gallery[];
@@ -22,6 +24,8 @@ const GalleryPage = ({ serverData, hasError }: Props) => {
     const { galleryData: galleryDataFromApi, updateGallery, isLoading, mutate } = useGalleryData();
     const { showCommentModal } = useCommentModal();
     const toast = useToast();
+    const { data: session } = useSession();
+    const { setModalVisibility } = useContext(SignInModalContext);
 
     const updatedGalleryData = useMemo(() => {
         return isLoading && galleryDataFromApi.length === 0 ? serverData : galleryDataFromApi;
@@ -29,6 +33,12 @@ const GalleryPage = ({ serverData, hasError }: Props) => {
 
 
     const handleLikeDislike = async (topicId: string, isLike: boolean) => {
+
+        if (!session) {
+            setModalVisibility(true);
+            return;
+        }
+
         if (!updatedGalleryData)
             return;
 
