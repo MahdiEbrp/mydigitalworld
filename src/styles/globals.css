@@ -23,6 +23,7 @@
     ---primary950: #ffb465;
     ---input-bg: #ffcb94;
     ---input-color: #4b4b4b;
+    ---placeholder: #877d73;
   }
   .dark {
     ---like-text800: #ff6f6f;
@@ -44,6 +45,7 @@
     ---primary950: #20232a;
     ---input-bg: #6e7687;
     ---input-color: #ecf0f5;
+    ---placeholder: #939faf;
   }
   .google {
     ---primary800: #b81919;

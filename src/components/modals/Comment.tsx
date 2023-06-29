@@ -101,9 +101,10 @@ const Comments = ({ topicId,onCountChange }: CommentProps) => {
         return (
             <>
                 <textarea
-                    className='block text-base resize-none shadow-sm w-full px-4 py-2 leading-5 text-input bg-input border border-primary-100 rounded focus:outline-none focus:bg-input focus:border-primary-100'
+                    className='block text-base resize-none shadow-sm w-full px-4 py-2 leading-5 text-input bg-input border border-primary-100 rounded focus:outline-none focus:bg-input focus:border-primary-100  placeholder:text-placeholder'
                     rows={INPUT_ROWS}
                     ref={inputRef}
+                    placeholder='Ready for a wild keyboard adventure!'
                 />
                 <div className='flex items-center self-stretch justify-between'>
                     <div className='inline-flex gap-1'>

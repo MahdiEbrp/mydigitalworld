@@ -91,6 +91,7 @@ module.exports = {
           700: "var(---primary700)",
           800: "var(---primary800)",
         },
+        placeholder:"var(---placeholder)",
         paper: "var(---paper-text)",
         primary: {
           800: "var(---primary-text800)",

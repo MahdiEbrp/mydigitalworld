@@ -9,6 +9,7 @@ export type Gallery = {
     dislikes: number;
     comments: number;
     topicId: string;
+    altTag: string;
     likedBySessionUser: boolean,
     commentedBySessionUser: boolean,
     dislikedBySessionUser: boolean;

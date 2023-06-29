@@ -2,6 +2,7 @@ import React, { HTMLAttributes, useEffect, useRef, useState } from 'react';
 import { HiChevronDown } from 'react-icons/hi';
 import { MdClear } from 'react-icons/md';
 import Animation from './Animation';
+import Input from './Input';
 
 export type ComboBoxOption = {
     label: string;
@@ -54,12 +55,11 @@ const ComboBox: React.FC<ComboBoxProps> = ({ options, onSelectionChange, ...rest
     return (
         <div className={`${className ? className : ''} relative w-full`}>
             <div className='flex border rounded overflow-hidden border-primary-100'>
-                <input
-                    className='block text-base resize-none shadow-sm w-full px-4 py-2 leading-5 text-input bg-input border-none focus:outline-none focus:bg-input focus:border-primary-100'
-                    placeholder='Type to search...'
+                <Input
+                    placeholder='Keyboard, unleash the searching power!'
                     onClick={() => setIsOpen(true)}
                     onChange={handleInputChange}
-                    ref={inputRef}
+                    inputRef={inputRef}
                 />
                 <button
                     type='button'

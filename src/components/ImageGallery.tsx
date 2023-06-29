@@ -27,6 +27,7 @@ const ImageCard = ({
     commentedBySessionUser,
     isLoading,
     isDisable,
+    altTag,
     onLikeClick = () => 0,
     onDislikeClick = () => 0,
     onCommentClick = () => 0
@@ -38,7 +39,7 @@ const ImageCard = ({
                 width={400}
                 height={300}
                 src={src}
-                alt={title}
+                alt={altTag}
             />
             <CardContent className='m-3'>
                 <h2 className='text-lg text-primary-950 font-semibold'>{title}</h2>
