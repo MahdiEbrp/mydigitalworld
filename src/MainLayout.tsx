@@ -7,6 +7,7 @@ import { SignInModalContext } from './context/SignInContext';
 import { ThemeContext } from '@/context/Theme';
 import ToastProvider from './context/ToastContext';
 import CommentModalProvider from './context/CommentContext';
+import MessageBoxProvider from './context/MessageBoxContext';
 
 export const MainLayout = ({ children }: { children?: ReactElement; }) => {
     const [theme, setTheme] = useState<string>('');
@@ -26,20 +27,22 @@ export const MainLayout = ({ children }: { children?: ReactElement; }) => {
             <SignInModalContext.Provider value={{ isModalVisible, setModalVisibility }}>
                 <ToastProvider>
                     <CommentModalProvider>
-                        <div className={`flex flex-col h-[100vh] min-h-[max(100%,100vh)] bg-gradient-to-b from-primaryBackground-300 via-primaryBackground-200 to-primaryBackground-100 ${theme}`}>
-                            <nav className='flex-shrink-0'>
-                                <Navbar />
-                            </nav>
-                            <main className='z-20 flex-grow overflow-x-hidden'>
-                                <>
-                                    {children}
-                                </>
-                                <SignIn />
-                            </main>
-                            <footer className='bg-gray-800 text-white flex-shrink-0'>
-                                Support
-                            </footer>
-                        </div>
+                        <MessageBoxProvider>
+                            <div className={`flex flex-col h-[100vh] min-h-[max(100%,100vh)] bg-gradient-to-b from-primaryBackground-300 via-primaryBackground-200 to-primaryBackground-100 ${theme}`}>
+                                <nav className='flex-shrink-0'>
+                                    <Navbar />
+                                </nav>
+                                <main className='z-20 flex-grow overflow-x-hidden'>
+                                    <>
+                                        {children}
+                                    </>
+                                    <SignIn />
+                                </main>
+                                <footer className='bg-gray-800 text-white flex-shrink-0'>
+                                    Support
+                                </footer>
+                            </div>
+                        </MessageBoxProvider>
                         <StarParticles />
                     </CommentModalProvider>
                 </ToastProvider>

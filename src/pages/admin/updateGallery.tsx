@@ -15,6 +15,7 @@ import Button from '@/components/Button';
 import { IoAdd } from 'react-icons/io5';
 import Tooltip from '@/components/Tooltip';
 import { BiEdit } from 'react-icons/bi';
+import { useMessageBox } from '@/context/MessageBoxContext';
 
 const INPUT_ROWS = 8;
 
@@ -43,6 +44,7 @@ const AdminUpdateGallery = () => {
     const descriptionRef = useRef<HTMLTextAreaElement>(null);
 
     const { galleryData, error, adminError, isLoading } = useAdminGalleryData();
+    const { showMessageBox } = useMessageBox();
 
     const RenderContent = () => {
         const [options, setOptions] = useState<ComboBoxOption[]>([]);
@@ -122,7 +124,7 @@ const AdminUpdateGallery = () => {
                                     </CircleButton>
                                 </Tooltip>
                             </div>
-                            <Button >
+                            <Button className='gap-1'>
                                 <FaExclamationTriangle className='w-5 h-5' />
                                 <span>Import From JSON</span>
                             </Button>
