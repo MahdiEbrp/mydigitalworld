@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useRef, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import Head from 'next/head';
 import Card, { CardContent, CardTitle } from '@/components/Card';
 import ComboBox, { ComboBoxOption } from '@/components/ComboBox';
@@ -32,23 +32,19 @@ const LabelledComponent = ({ label, children }: LabelledComponentProps) => {
         </div>
     );
 };
-
-
-
+let selectedValue ='';
 const AdminUpdateGallery = () => {
-    const altTagRef = useRef<HTMLInputElement>(null);
-    const srcRef = useRef<HTMLInputElement>(null);
-    const titleRef = useRef<HTMLInputElement>(null);
-    const locationRef = useRef<HTMLInputElement>(null);
-
-    const descriptionRef = useRef<HTMLTextAreaElement>(null);
-
+    const [altTag, setAltTag] = useState('');
+    const [title, setTitle] = useState('');
+    const [src, setSrc] = useState('');
+    const [location, setLocation] = useState('');
+    const [description, setDescription] = useState('');
     const { galleryData, error, adminError, isLoading } = useAdminGalleryData();
     const { showMessageBox } = useMessageBox();
 
+
     const RenderContent = () => {
         const [options, setOptions] = useState<ComboBoxOption[]>([]);
-        const [selectedIndex, setSelectedIndex] = useState(-1);
 
         useEffect(() => {
             const values = galleryData.map((image) => ({
@@ -63,22 +59,21 @@ const AdminUpdateGallery = () => {
         if (error) return <FetchError />;
         if (!galleryData || galleryData.length === 0) return <NothingToSee />;
 
-
         const handleSelectionChange = (value: string, index: number) => {
-            setSelectedIndex(index);
             if (index === -1)
                 return;
+            selectedValue = value;
             const post = galleryData[index];
-            if (srcRef.current && descriptionRef.current && altTagRef.current && titleRef.current && locationRef.current) {
-                titleRef.current.value = post.title;
-                srcRef.current.value = post.src;
-                altTagRef.current.value = post.altTag;
-                locationRef.current.value = post.location;
-                descriptionRef.current.value = post.description;
-
-            }
+            setTitle(post.title);
+            setLocation(post.location);
+            setSrc(post.src);
+            setAltTag(post.altTag);
+            setDescription(post.description);
         };
+        const showDeleteMessageBox = async () => {
+            const button = await showMessageBox('Are you sure?', 'Delete item', ['yes', 'no']);
 
+        };
         return (
             <Card className='w-[min(90vh,90%)]'>
                 <CardTitle title='Admin-Update Gallery' />
@@ -88,38 +83,39 @@ const AdminUpdateGallery = () => {
                             <ComboBox options={options} onSelectionChange={handleSelectionChange} />
                         </LabelledComponent>
                         <LabelledComponent label='Title'>
-                            <Input maxLength={500} className='border border-primary-100 rounded' inputRef={titleRef} />
-                        </LabelledComponent>
-                        <LabelledComponent label='Image URL'>
-                            <Input maxLength={500} className='border border-primary-100 rounded' inputRef={srcRef} />
+                            <Input defaultValue={title} maxLength={500} className='border border-primary-100 rounded' onBlur={(e) => setTitle(e.currentTarget.value)} />
                         </LabelledComponent>
                         <LabelledComponent label='Location'>
-                            <Input maxLength={500} className='border border-primary-100 rounded' inputRef={locationRef} />
+                            <Input defaultValue={location} maxLength={500} className='border border-primary-100 rounded' onBlur={(e) => setLocation(e.currentTarget.value)} />
+                        </LabelledComponent>
+                        <LabelledComponent label='Image URL'>
+                            <Input defaultValue={src} maxLength={500} className='border border-primary-100 rounded' onBlur={(e) => setSrc(e.currentTarget.value)} />
                         </LabelledComponent>
                         <LabelledComponent label='Alt tag'>
-                            <Input maxLength={100} className='border border-primary-100 rounded' inputRef={altTagRef} />
+                            <Input defaultValue={altTag} maxLength={100} className='border border-primary-100 rounded' onBlur={(e) => setAltTag(e.currentTarget.value)} />
                         </LabelledComponent>
                         <LabelledComponent label='Description'>
                             <TextArea
                                 rows={INPUT_ROWS}
-                                inputRef={descriptionRef}
+                                defaultValue={description}
+                                onBlur={(e) => setDescription(e.currentTarget.value)}
                                 maxLength={1024}
                             />
                         </LabelledComponent>
                         <div className='flex justify-between items-center flex-col sm:flex-row '>
                             <div className='flex '>
                                 <Tooltip text='Add New'>
-                                    <CircleButton>
+                                    <CircleButton onClick={showDeleteMessageBox}>
                                         <IoAdd className='w-7 h-7' />
                                     </CircleButton>
                                 </Tooltip>
                                 <Tooltip text='Update'>
-                                    <CircleButton disabled={selectedIndex === -1}>
+                                    <CircleButton disabled={selectedValue === ''}>
                                         <BiEdit className='w-7 h-7' />
                                     </CircleButton>
                                 </Tooltip>
                                 <Tooltip text='Delete'>
-                                    <CircleButton disabled={selectedIndex === -1}>
+                                    <CircleButton disabled={selectedValue === ''}>
                                         <FaTrash className='w-7 h-7' />
                                     </CircleButton>
                                 </Tooltip>
