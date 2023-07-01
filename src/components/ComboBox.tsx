@@ -12,9 +12,10 @@ export type ComboBoxOption = {
 type ComboBoxProps = {
     options: ComboBoxOption[];
     onSelectionChange?: (value: string, index: number) => void;
+    onClear?: () => void;
 } & HTMLAttributes<HTMLDivElement>;
 
-const ComboBox: React.FC<ComboBoxProps> = ({ options, onSelectionChange, ...rest }) => {
+const ComboBox: React.FC<ComboBoxProps> = ({ options, onSelectionChange,onClear, ...rest }) => {
     const [selectedOption, setSelectedOption] = useState<ComboBoxOption | null>(null);
     const [isOpen, setIsOpen] = useState(false);
     const [filteredOptions, setFilteredOptions] = useState<ComboBoxOption[]>([]);
@@ -50,6 +51,7 @@ const ComboBox: React.FC<ComboBoxProps> = ({ options, onSelectionChange, ...rest
         if (inputRef.current)
             inputRef.current.value = '';
         setIsOpen(false);
+        onClear?.();
     };
 
     return (

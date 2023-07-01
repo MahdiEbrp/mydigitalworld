@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactNode, useEffect, useRef, useState } from 'react';
 import Head from 'next/head';
 import Card, { CardContent, CardTitle } from '@/components/Card';
 import ComboBox, { ComboBoxOption } from '@/components/ComboBox';
@@ -16,6 +16,8 @@ import { IoAdd } from 'react-icons/io5';
 import Tooltip from '@/components/Tooltip';
 import { BiEdit } from 'react-icons/bi';
 import { useMessageBox } from '@/context/MessageBoxContext';
+import { Gallery } from '@/type/gallery';
+import { useToast } from '@/context/ToastContext';
 
 const INPUT_ROWS = 8;
 
@@ -32,16 +34,21 @@ const LabelledComponent = ({ label, children }: LabelledComponentProps) => {
         </div>
     );
 };
-let selectedValue ='';
+let selectedValue = '';
+let title = '';
+let location = '';
+let src = '';
+let altTag = '';
+let description = '';
 const AdminUpdateGallery = () => {
-    const [altTag, setAltTag] = useState('');
-    const [title, setTitle] = useState('');
-    const [src, setSrc] = useState('');
-    const [location, setLocation] = useState('');
-    const [description, setDescription] = useState('');
-    const { galleryData, error, adminError, isLoading } = useAdminGalleryData();
+    const altTagRef = useRef<HTMLInputElement>(null);
+    const titleRef = useRef<HTMLInputElement>(null);
+    const srcRef = useRef<HTMLInputElement>(null);
+    const locationRef = useRef<HTMLInputElement>(null);
+    const descriptionRef = useRef<HTMLTextAreaElement>(null);
+    const { galleryData, error, adminError, isLoading, insertGallery } = useAdminGalleryData();
     const { showMessageBox } = useMessageBox();
-
+    const { showToast } = useToast();
 
     const RenderContent = () => {
         const [options, setOptions] = useState<ComboBoxOption[]>([]);
@@ -60,19 +67,72 @@ const AdminUpdateGallery = () => {
         if (!galleryData || galleryData.length === 0) return <NothingToSee />;
 
         const handleSelectionChange = (value: string, index: number) => {
-            if (index === -1)
-                return;
+            if (index === -1) return;
             selectedValue = value;
             const post = galleryData[index];
-            setTitle(post.title);
-            setLocation(post.location);
-            setSrc(post.src);
-            setAltTag(post.altTag);
-            setDescription(post.description);
+            if (titleRef.current && locationRef.current && srcRef.current && altTagRef.current && descriptionRef.current) {
+                titleRef.current.value = post.title;
+                locationRef.current.value = post.location;
+                srcRef.current.value = post.src;
+                altTagRef.current.value = post.altTag;
+                descriptionRef.current.value = post.description;
+            }
         };
-        const showDeleteMessageBox = async () => {
+        const handleClear = () => {
+            selectedValue = '';
+            if (titleRef.current && locationRef.current && srcRef.current && altTagRef.current && descriptionRef.current) {
+                titleRef.current.value = '';
+                locationRef.current.value = '';
+                srcRef.current.value = '';
+                altTagRef.current.value = '';
+                descriptionRef.current.value = '';
+            }
+        };
+        const handleDelete = async () => {
             const button = await showMessageBox('Are you sure?', 'Delete item', ['yes', 'no']);
 
+        };
+        const handleInputChange = () => {
+            if (!titleRef.current || !locationRef.current || !srcRef.current || !altTagRef.current || !descriptionRef.current) {
+                showToast('Invalid object!', 'error');
+                return;
+            }
+            title = titleRef.current.value;
+            location = locationRef.current.value;
+            src = srcRef.current.value;
+            altTag = altTagRef.current.value;
+            description = descriptionRef.current.value;
+        };
+        const handleUpdate = async (insertMode: boolean) => {
+
+
+            if (!insertMode && selectedValue === '') {
+                showToast('Oops! 🙈 No item selected. 😅', 'error');
+                return;
+            }
+            if (title === '') {
+                showToast('Oops, Missing Title Magic! 🎩✨', 'error');
+                return;
+            }
+            if (location === '') {
+                showToast('Lost. Location: Not Found. 🙈', 'error');
+                return;
+            }
+            if (src === '') {
+                showToast('📷 Oops! Image: Missing 😅', 'error');
+                return;
+            }
+            if (altTag === '') {
+                showToast('🤷‍♀️ Lost in Translation: Altless Image!', 'error');
+                return;
+            }
+            if (description === '') {
+                showToast('🤷‍♂️ No description: Words Gone Fishing!', 'error');
+                return;
+            }
+            const id = insertMode ? Math.random().toString() : selectedValue;
+            const newData = { id, title, src, altTag, location, description };
+            insertGallery(newData as Gallery);
         };
         return (
             <Card className='w-[min(90vh,90%)]'>
@@ -80,42 +140,48 @@ const AdminUpdateGallery = () => {
                 <CardContent>
                     <div className='flex flex-col gap-1'>
                         <LabelledComponent label='Select post'>
-                            <ComboBox options={options} onSelectionChange={handleSelectionChange} />
+                            <ComboBox options={options} onSelectionChange={handleSelectionChange} onClear={handleClear} />
                         </LabelledComponent>
                         <LabelledComponent label='Title'>
-                            <Input defaultValue={title} maxLength={500} className='border border-primary-100 rounded' onBlur={(e) => setTitle(e.currentTarget.value)} />
+                            <Input defaultValue={title} inputRef={titleRef} onChange={handleInputChange}
+                                id='title' name='title'
+                                maxLength={500} className='border border-primary-100 rounded' />
                         </LabelledComponent>
                         <LabelledComponent label='Location'>
-                            <Input defaultValue={location} maxLength={500} className='border border-primary-100 rounded' onBlur={(e) => setLocation(e.currentTarget.value)} />
+                            <Input defaultValue={location} inputRef={locationRef}
+                                id='location' name='location' onChange={handleInputChange}
+                                maxLength={500} className='border border-primary-100 rounded' />
                         </LabelledComponent>
                         <LabelledComponent label='Image URL'>
-                            <Input defaultValue={src} maxLength={500} className='border border-primary-100 rounded' onBlur={(e) => setSrc(e.currentTarget.value)} />
+                            <Input defaultValue={src} inputRef={srcRef} maxLength={500}
+                                id='image' name='image' onChange={handleInputChange}
+                                className='border border-primary-100 rounded' />
                         </LabelledComponent>
                         <LabelledComponent label='Alt tag'>
-                            <Input defaultValue={altTag} maxLength={100} className='border border-primary-100 rounded' onBlur={(e) => setAltTag(e.currentTarget.value)} />
+                            <Input id='alt' defaultValue={altTag} onChange={handleInputChange}
+                                inputRef={altTagRef} maxLength={100} className='border border-primary-100 rounded' />
                         </LabelledComponent>
                         <LabelledComponent label='Description'>
-                            <TextArea
-                                rows={INPUT_ROWS}
-                                defaultValue={description}
-                                onBlur={(e) => setDescription(e.currentTarget.value)}
+                            <TextArea defaultValue={description} onChange={handleInputChange}
+                                rows={INPUT_ROWS} inputRef={descriptionRef}
+                                id='description' name='description'
                                 maxLength={1024}
                             />
                         </LabelledComponent>
                         <div className='flex justify-between items-center flex-col sm:flex-row '>
                             <div className='flex '>
                                 <Tooltip text='Add New'>
-                                    <CircleButton onClick={showDeleteMessageBox}>
+                                    <CircleButton onClick={() => handleUpdate(true)}>
                                         <IoAdd className='w-7 h-7' />
                                     </CircleButton>
                                 </Tooltip>
                                 <Tooltip text='Update'>
-                                    <CircleButton disabled={selectedValue === ''}>
+                                    <CircleButton disabled={selectedValue === ''} onClick={() => handleUpdate(false)}>
                                         <BiEdit className='w-7 h-7' />
                                     </CircleButton>
                                 </Tooltip>
                                 <Tooltip text='Delete'>
-                                    <CircleButton disabled={selectedValue === ''}>
+                                    <CircleButton disabled={selectedValue === ''} onClick={handleDelete}>
                                         <FaTrash className='w-7 h-7' />
                                     </CircleButton>
                                 </Tooltip>
