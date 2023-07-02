@@ -1,7 +1,6 @@
-import React, { HTMLAttributes, useEffect, useRef, useState } from 'react';
+import React, { HTMLAttributes, useEffect, useState } from 'react';
 import { HiChevronDown } from 'react-icons/hi';
 import { MdClear } from 'react-icons/md';
-import Animation from './Animation';
 import Input from './Input';
 
 export type ComboBoxOption = {
@@ -11,45 +10,43 @@ export type ComboBoxOption = {
 
 type ComboBoxProps = {
     options: ComboBoxOption[];
+    selectedValue?: string;
     onSelectionChange?: (value: string, index: number) => void;
     onClear?: () => void;
 } & HTMLAttributes<HTMLDivElement>;
-
-const ComboBox: React.FC<ComboBoxProps> = ({ options, onSelectionChange,onClear, ...rest }) => {
-    const [selectedOption, setSelectedOption] = useState<ComboBoxOption | null>(null);
+const ComboBox: React.FC<ComboBoxProps> = ({ options, selectedValue, onSelectionChange, onClear, ...rest }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [filteredOptions, setFilteredOptions] = useState<ComboBoxOption[]>([]);
-    const inputRef = useRef<HTMLInputElement>(null);
+    const [inputValue, setInputValue] = useState('');
     const { className } = rest;
 
+    useEffect(() => {
+        const selectedOption = options.find(op => op.value === selectedValue || '');
+        if (selectedOption)
+            setInputValue(selectedOption.label);
+    }, [selectedValue, options]);
     useEffect(() => {
         setFilteredOptions(options);
     }, [options]);
 
     const handleOptionClick = (option: ComboBoxOption) => {
-        setSelectedOption(option);
         const selectedIndex = options.findIndex(item => item.value === option.value);
         onSelectionChange?.(option.value, selectedIndex);
         setIsOpen(false);
-        if (inputRef.current)
-            inputRef.current.value = option.label;
+        setInputValue(option.label);
     };
 
-    const handleInputChange = () => {
-        if (!inputRef.current)
-            return;
-
-        const searchText = inputRef.current.value.trim();
+    const handleInputChange = (label: string) => {
+        setInputValue(label);
+        const searchText = label.trim();
         const regex = new RegExp(searchText, 'i');
         const filteredOptions = options.filter(option => regex.test(option.label));
         setFilteredOptions(filteredOptions);
     };
     const handleClear = () => {
         setFilteredOptions(options);
-        setSelectedOption(null);
         onSelectionChange?.('', -1);
-        if (inputRef.current)
-            inputRef.current.value = '';
+        setInputValue('');
         setIsOpen(false);
         onClear?.();
     };
@@ -59,9 +56,9 @@ const ComboBox: React.FC<ComboBoxProps> = ({ options, onSelectionChange,onClear,
             <div className='flex border rounded overflow-hidden border-primary-100'>
                 <Input
                     placeholder='Keyboard, unleash the searching power!'
+                    value={inputValue}
                     onClick={() => setIsOpen(true)}
-                    onChange={handleInputChange}
-                    inputRef={inputRef}
+                    onChange={(e) => handleInputChange(e.target.value)}
                 />
                 <button
                     type='button'
@@ -82,19 +79,17 @@ const ComboBox: React.FC<ComboBoxProps> = ({ options, onSelectionChange,onClear,
 
             </div>
 
-            <div className='absolute z-50 mt-1 w-full bg-primary-500 shadow-lg max-h-60 rounded-es overflow-auto focus:outline-none'>
-                <Animation animation={isOpen ? 'expandTop' : 'collapseTop'} >
-                    {filteredOptions.map((option) =>
-                        <button
-                            key={option.value}
-                            type='button'
-                            className={`w-full text-left py-2 px-4 transition-opacity hover:text-paper opacity-90 hover:opacity-100 ${selectedOption?.value === option.value ? 'bg-primary-700 text-primary-900' : ''}`}
-                            onClick={() => handleOptionClick(option)}
-                        >
-                            {option.label}
-                        </button>
-                    )}
-                </Animation>
+            <div className={`${isOpen ? 'opacity-100' : 'opacity-0 max-w-0 max-h-0'} transition-all duration-300 absolute z-50 mt-1 w-full bg-primary-500 shadow-lg max-h-60 rounded-es overflow-auto focus:outline-none`}>
+                {filteredOptions.map((option) =>
+                    <button
+                        key={option.value}
+                        type='button'
+                        className={`w-full text-left py-2 px-4 transition-opacity hover:text-paper opacity-90 hover:opacity-100 ${selectedValue === option.value ? 'bg-primary-700 text-primary-900' : ''}`}
+                        onClick={() => handleOptionClick(option)}
+                    >
+                        {option.label}
+                    </button>
+                )}
             </div>
         </div>
     );

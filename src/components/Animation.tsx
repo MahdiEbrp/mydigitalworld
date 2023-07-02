@@ -7,6 +7,7 @@ type AnimationProps = {
     animation: AnimationType;
     className?: string;
     delay?: number;
+    onAnimationDone?: () => void;
 };
 
 const getAnimationStyle = (animation: AnimationType, isAnimationDone: boolean) => {
@@ -27,19 +28,22 @@ const getAnimationStyle = (animation: AnimationType, isAnimationDone: boolean) =
 const ANIMATION_DURATION = 2000;
 let prevAnimation = '';
 
-const AnimatedContainer = ({ children, animation, className = '', delay = 0 }: AnimationProps) => {
+const AnimatedContainer = ({ children, animation, className = '', onAnimationDone, delay = 0 }: AnimationProps) => {
     const baseStyle = `overflow-hidden transition-all duration-${ANIMATION_DURATION}ms`;
     const isAnimationDone = prevAnimation === animation;
     const [style, setStyle] = useState(`${baseStyle} ${getAnimationStyle(animation, isAnimationDone)}`);
 
     useEffect(() => {
-        if (isAnimationDone) return;
+        if (isAnimationDone) {
+            onAnimationDone?.();
+            return;
+        }
         const timeoutId = setTimeout(() => {
             setStyle(`${baseStyle} ${getAnimationStyle(animation, true)}`);
             prevAnimation = animation;
         }, delay);
         return () => clearTimeout(timeoutId);
-    }, [animation, baseStyle, delay, isAnimationDone]);
+    }, [animation, baseStyle, delay, isAnimationDone, onAnimationDone]);
 
     return <div className={`${className} ${style}`}>{children}</div>;
 };
