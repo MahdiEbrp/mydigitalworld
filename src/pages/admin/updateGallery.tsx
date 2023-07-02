@@ -5,7 +5,6 @@ import ComboBox, { ComboBoxOption } from '@/components/ComboBox';
 import AdminError from '@/components/display/AdminError';
 import FetchError from '@/components/display/FetchError';
 import Loader from '@/components/display/Loader';
-import NothingToSee from '@/components/display/NothingToSee';
 import useAdminGalleryData from '@/helpers/useAdminGalleryData';
 import Input from '@/components/Input';
 import TextArea from '@/components/TextArea';
@@ -43,7 +42,7 @@ let location = '';
 let description = '';
 const AdminUpdateGallery = () => {
 
-    const { galleryData, error, adminError, isLoading, insertGallery, updateGallery } = useAdminGalleryData();
+    const { galleryData, error, adminError, isLoading, insertGallery, updateGallery,deleteGallery,isUpdating } = useAdminGalleryData();
     const { showMessageBox } = useMessageBox();
     const { showToast } = useToast();
     const [selectedValue, setSelectedValue] = useState('');
@@ -61,7 +60,6 @@ const AdminUpdateGallery = () => {
         if (isLoading) return <Loader />;
         if (adminError) return <AdminError />;
         if (error) return <FetchError />;
-        if (!galleryData || galleryData.length === 0) return <NothingToSee />;
 
         const handleSelectionChange = (value: string, index: number) => {
             if (index === -1) return;
@@ -83,8 +81,21 @@ const AdminUpdateGallery = () => {
         };
 
         const handleDelete = async () => {
-            const button = await showMessageBox('Are you sure?', 'Delete item', ['yes', 'no']);
+            const button = await showMessageBox('Deleting this item? Let\'s consult the committee of second thoughts! 🤔💥🗑️', 'Delete item', ['yes', 'no']);
+            if (button === 'yes') {
+                const { error } = await deleteGallery(selectedValue);
 
+                if (error) {
+                    if (error instanceof AxiosError)
+                        showToast(getHumorousHTTPMessage(error.response?.status || 0), 'error', 4000);
+                    else
+                        showToast('Seriously, doesn\'t know what\'s happening.🧐👻', 'error', 2000);
+                }
+                else {
+                    showToast('🗑️ Oopsie-daisy! 🚫📝 Your post has taken a one-way trip to the virtual dumpster! 🙌', 'success', 2000);
+                    handleClear();
+                }
+            }
         };
 
         const handleUpdate = async (insertMode: boolean) => {
@@ -168,17 +179,17 @@ const AdminUpdateGallery = () => {
                         <div className='flex justify-between items-center flex-col sm:flex-row '>
                             <div className='flex '>
                                 <Tooltip text='Add New'>
-                                    <CircleButton onClick={() => handleUpdate(true)}>
+                                    <CircleButton disabled={isUpdating} onClick={() => handleUpdate(true)}>
                                         <IoAdd className='w-7 h-7' />
                                     </CircleButton>
                                 </Tooltip>
                                 <Tooltip text='Update'>
-                                    <CircleButton disabled={selectedValue === ''} onClick={() => handleUpdate(false)}>
+                                    <CircleButton disabled={selectedValue === '' || isUpdating} onClick={() => handleUpdate(false)}>
                                         <BiEdit className='w-7 h-7' />
                                     </CircleButton>
                                 </Tooltip>
                                 <Tooltip text='Delete'>
-                                    <CircleButton disabled={selectedValue === ''} onClick={handleDelete}>
+                                    <CircleButton disabled={selectedValue === '' || isUpdating} onClick={handleDelete}>
                                         <FaTrash className='w-7 h-7' />
                                     </CircleButton>
                                 </Tooltip>
