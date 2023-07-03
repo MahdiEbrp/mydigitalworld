@@ -12,14 +12,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(405).end();
     }
 
-    if (!session?.user?.email) {
+    if (!session?.user?.email || session.user.email !== process.env.SUPERUSER_EMAIL) {
         return res.status(401).end();
-    }
-
-    const userEmail = session.user.email || '';
-
-    if (userEmail !== process.env.SUPERUSER_EMAIL) {
-        return res.status(403).end();
     }
 
     const { id } = <{ id: string; }> req.body ;
@@ -31,7 +25,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         const post= await prisma.gallery.delete({
             where: {
-                id: id,
+                id,
             },
         });
         await prisma.topic.delete({

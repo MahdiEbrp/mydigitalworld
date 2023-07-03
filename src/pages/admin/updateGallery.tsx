@@ -42,7 +42,7 @@ let location = '';
 let description = '';
 const AdminUpdateGallery = () => {
 
-    const { galleryData, error, adminError, isLoading, insertGallery, updateGallery,deleteGallery,isUpdating } = useAdminGalleryData();
+    const { galleryData, error, adminError, isLoading, isUpdating, insertGallery, updateGallery, deleteGallery, importGallery } = useAdminGalleryData();
     const { showMessageBox } = useMessageBox();
     const { showToast } = useToast();
     const [selectedValue, setSelectedValue] = useState('');
@@ -81,8 +81,8 @@ const AdminUpdateGallery = () => {
         };
 
         const handleDelete = async () => {
-            const button = await showMessageBox('Deleting this item? Let\'s consult the committee of second thoughts! 🤔💥🗑️', 'Delete item', ['yes', 'no']);
-            if (button === 'yes') {
+            const confirmButton = await showMessageBox('Deleting this item? Let\'s consult the committee of second thoughts! 🤔💥🗑️', 'Delete item', ['yes', 'no']);
+            if (confirmButton === 'yes') {
                 const { error } = await deleteGallery(selectedValue);
 
                 if (error) {
@@ -125,20 +125,39 @@ const AdminUpdateGallery = () => {
             }
             const id = insertMode ? Math.random().toString() : selectedValue;
             const newData = { id, title, src, altTag, location, description };
-            let error: unknown = undefined;
+            let response: { error: unknown; } = { error: undefined };
             if (insertMode)
-                error = await insertGallery(newData as Gallery);
+                response = await insertGallery(newData as Gallery);
             else
-                error = await updateGallery(newData as Gallery);
-            if (!error) {
+                response = await updateGallery(newData as Gallery);
+            const { error } = response;
+            if (error) {
                 if (error instanceof AxiosError)
-                    showToast(getHumorousHTTPMessage(error.response?.status || 0), 'error', 4000);
+                    showToast(getHumorousHTTPMessage(error.status || 0), 'error', 4000);
                 else
                     showToast('Seriously, doesn\'t know what\'s happening.🧐👻', 'error', 2000);
             }
             else {
                 showToast(`🎉 Congratulations! You nailed it! 🙌 Your post has been successfully ${insertMode ? 'created' : 'updated'}. Keep up the great work! 💪`, 'success', 2000);
                 handleClear();
+            }
+
+        };
+        const handleImport = async () => {
+            const confirmButton = await showMessageBox('Are you sure you want to import default data? Don\'t blame us for chaos! 😅', 'Import Data', ['yes', 'no']);
+            if (confirmButton === 'yes') {
+                const { error } = await importGallery();
+                if (error) {
+                    if (error instanceof AxiosError)
+                        showToast(getHumorousHTTPMessage(error.response?.status || 0), 'error', 4000);
+                    else
+                        showToast('Seriously, doesn\'t know what\'s happening.🧐👻', 'error', 2000);
+                }
+                else {
+                    showToast('🎉 Congratulations! You nailed it! 🙌 The data has been successfully imported. Keep up the great work! 💪', 'success', 2000);
+                    handleClear();
+                }
+
             }
 
         };
@@ -194,7 +213,7 @@ const AdminUpdateGallery = () => {
                                     </CircleButton>
                                 </Tooltip>
                             </div>
-                            <Button className='gap-1'>
+                            <Button disabled={isUpdating} className='gap-1' onClick={handleImport}>
                                 <FaExclamationTriangle className='w-5 h-5' />
                                 <span>Import From JSON</span>
                             </Button>

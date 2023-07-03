@@ -19,14 +19,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(405).end();
     }
 
-    if (!session?.user?.email) {
+    if (!session?.user?.email || session.user.email !== process.env.SUPERUSER_EMAIL) {
         return res.status(401).end();
-    }
-
-    const userEmail = session.user.email || '';
-
-    if (userEmail !== process.env.SUPERUSER_EMAIL) {
-        return res.status(403).end();
     }
 
     const { title, location, src, altTag, description } = req.body as GalleryRequestBody;
@@ -43,18 +37,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const createdTopic = await prisma.topic.create({
             data: {
                 description: title.toUpperCase().substring(0, 255),
-                userId: userId,
+                userId,
             },
         });
 
         const createdGallery = await prisma.gallery.create({
             data: {
-                topicId: createdTopic.id,
-                title: title,
-                location: location,
-                description: description,
-                src: src,
-                altTag: altTag,
+                topicId: createdTopic.id,title,location,description,src,altTag,
             },
         });
 

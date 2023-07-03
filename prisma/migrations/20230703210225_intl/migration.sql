@@ -49,10 +49,10 @@ CREATE TABLE "Gallery" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "title" VARCHAR(500) NOT NULL,
     "location" VARCHAR(500) NOT NULL,
-    "src" TEXT NOT NULL,
-    "description" TEXT NOT NULL,
+    "src" VARCHAR(500) NOT NULL,
+    "description" VARCHAR(1024) NOT NULL,
     "topicId" TEXT NOT NULL,
-    "altTag" TEXT,
+    "altTag" VARCHAR(100) NOT NULL,
 
     CONSTRAINT "Gallery_pkey" PRIMARY KEY ("id")
 );

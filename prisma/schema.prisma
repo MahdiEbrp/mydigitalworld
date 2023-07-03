@@ -3,9 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url = env("POSTGRES_PRISMA_URL") // uses connection pooling
-  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+  provider          = "postgresql"
+  url               = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  directUrl         = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
   shadowDatabaseUrl = env("POSTGRES_URL_NON_POOLING") // used for migrations
 }
 
@@ -64,9 +64,9 @@ model Gallery {
   createdAt   DateTime @default(now())
   title       String   @db.VarChar(500)
   location    String   @db.VarChar(500)
-  src         String
-  description String
+  src         String   @db.VarChar(500)
+  description String   @db.VarChar(1024)
   topicId     String
-  altTag      String?
+  altTag      String   @db.VarChar(100)
   topic       Topic    @relation(fields: [topicId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 }

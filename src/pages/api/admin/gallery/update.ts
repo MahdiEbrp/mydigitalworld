@@ -20,36 +20,23 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(405).end();
     }
 
-    if (!session?.user?.email) {
+    if (!session?.user?.email || session.user.email !== process.env.SUPERUSER_EMAIL) {
         return res.status(401).end();
     }
 
-    const userEmail = session.user.email || '';
+    const { id, title, location, src, altTag, description } = req.body as GalleryRequestBody;
 
-    if (userEmail !== process.env.SUPERUSER_EMAIL) {
-        return res.status(403).end();
-    }
-
-    const { id,title, location, src, altTag, description } = req.body as GalleryRequestBody;
-
-    const valuesArray = [id,title, location, src, altTag, description];
+    const valuesArray = [id, title, location, src, altTag, description];
 
     if (valuesArray.some(value => !value || value.trim().length === 0)) {
         return res.status(400).end();
     }
 
     try {
-
         const createdGallery = await prisma.gallery.update({
-            where: {
-                id:id,
-            },
+            where: { id },
             data: {
-                title: title,
-                location: location,
-                description: description,
-                src: src,
-                altTag: altTag,
+                title, location, description, src, altTag
             },
         });
 
