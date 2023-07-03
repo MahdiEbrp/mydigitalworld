@@ -50,7 +50,7 @@ CREATE TABLE "Gallery" (
     "title" VARCHAR(500) NOT NULL,
     "location" VARCHAR(500) NOT NULL,
     "src" VARCHAR(500) NOT NULL,
-    "description" VARCHAR(1024) NOT NULL,
+    "description" TEXT NOT NULL,
     "topicId" TEXT NOT NULL,
     "altTag" VARCHAR(100) NOT NULL,
 
