@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Head from 'next/head';
 import Card, { CardContent, CardTitle } from '@/components/Card';
 import ComboBox, { ComboBoxOption } from '@/components/ComboBox';
@@ -19,22 +19,10 @@ import { Gallery } from '@/type/gallery';
 import { useToast } from '@/context/ToastContext';
 import { AxiosError } from 'axios';
 import getHumorousHTTPMessage from '@/lib/humorousHTTPMessage';
+import LabelledComponent from '@/components/LabelledComponent';
 
 const INPUT_ROWS = 8;
 
-type LabelledComponentProps = {
-    label: string;
-    children: ReactNode;
-};
-
-const LabelledComponent = ({ label, children }: LabelledComponentProps) => {
-    return (
-        <div className='flex flex-col gap-1 items-center w-full'>
-            <h4>{label}:</h4>
-            {children}
-        </div>
-    );
-};
 let altTag = '';
 let src = '';
 let title = '';

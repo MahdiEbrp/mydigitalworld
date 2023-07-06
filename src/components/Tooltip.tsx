@@ -31,7 +31,7 @@ const Tooltip = ({ text, children,...rest }: TooltipProps) => {
             {children}
             {!isDisabled &&
                 <div
-                    className={`absolute top-[100%] left-1/2 transition-all transform translate-x-[-50%] bg-primaryBackground-800 text-paper px-2 py-1 rounded text-xs whitespace-nowrap ${showTooltip ? 'opacity-100' : 'opacity-0 pointer-events-none'
+                    className={`z-[99999] absolute top-[100%] left-1/2 transition-all transform translate-x-[-50%] bg-primaryBackground-800 text-paper px-2 py-1 rounded text-xs whitespace-nowrap ${showTooltip ? 'opacity-100' : 'opacity-0 pointer-events-none'
                         }`}
                 >
                     {text}

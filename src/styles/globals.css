@@ -46,6 +46,8 @@
     ---input-bg: #6e7687;
     ---input-color: #ecf0f5;
     ---placeholder: #939faf;
+    ---testOpacity: 1;
+    ---test: rgba(74, 222, 128, var(---testOpacity));
   }
   .google {
     ---primary800: #b81919;
