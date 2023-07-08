@@ -20,6 +20,8 @@ import { useToast } from '@/context/ToastContext';
 import { AxiosError } from 'axios';
 import getHumorousHTTPMessage from '@/lib/humorousHTTPMessage';
 import LabelledComponent from '@/components/LabelledComponent';
+import { RiAdminFill } from 'react-icons/ri';
+import Link from 'next/link';
 
 const INPUT_ROWS = 8;
 
@@ -205,6 +207,13 @@ const AdminUpdateGallery = () => {
                                 <FaExclamationTriangle className='w-5 h-5' />
                                 <span>Import From JSON</span>
                             </Button>
+                            <Tooltip text='Back To admin panel'>
+                                <Link href='/admin/adminPanel'>
+                                    <CircleButton>
+                                        <RiAdminFill className='w-7 h-7' />
+                                    </CircleButton>
+                                </Link>
+                            </Tooltip>
                         </div>
                     </div>
                 </CardContent>

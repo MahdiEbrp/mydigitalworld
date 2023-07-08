@@ -10,12 +10,13 @@ import { SignInModalContext } from '../../context/SignInContext';
 import { BsFillCalendarDateFill, BsGithub, BsGoogle } from 'react-icons/bs';
 import { signIn, signOut, useSession } from 'next-auth/react';
 import { MdEmojiPeople } from 'react-icons/md';
+import Link from 'next/link';
 
 const SignIn = () => {
   const { isModalVisible, setModalVisibility } = useContext(SignInModalContext);
-  const { data:session, status } = useSession();
+  const { data: session, status } = useSession();
 
-  const handleSignInWithOAuth = async (provider:string) => {
+  const handleSignInWithOAuth = async (provider: string) => {
     await signIn(provider);
   };
 
@@ -55,7 +56,6 @@ const SignIn = () => {
     };
 
     if (!user) return <></>;
-
     return (
       <div>
         {user.image &&
@@ -70,16 +70,24 @@ const SignIn = () => {
         {user.createdAt &&
           <SubjectItem icon={BsFillCalendarDateFill} subject='Created at' detail={getTimeSinceDate(session.user.createdAt.toString())} />
         }
-        <div className='flex flex-col items-center'>
+        <div className='flex flex-row items-center justify-center'>
           <Button disabled={isSignOutDisabled} className='w-fit' onClick={handleSignOut}>Sign out</Button>
+          {user.isAdmin &&
+            <Button className='w-fit' onClick={() => setModalVisibility(false)}>
+              <Link href='/admin/adminPanel'>
+                Admin panel
+              </Link>
+            </Button>
+          }
+
         </div>
-      </div>
+      </div >
     );
   };
 
   return (
     <Modal isOpen={isModalVisible} title={session ? 'User Information' : 'Sign in'} onClose={() => setModalVisibility(false)}>
-      {status==='loading' ?
+      {status === 'loading' ?
         <CircularLoader />
         :
         <div className='mt-3'>{session ? <UserInfo /> : <SignInForm />}</div>

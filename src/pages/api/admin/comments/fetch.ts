@@ -17,6 +17,7 @@ export const Handler = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
         const topics = await prisma.topic.findMany();
         const comments = await prisma.comment.findMany();
+
         return res.status(200).json({ topics, comments });
 
     }

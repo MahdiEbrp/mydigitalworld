@@ -17,15 +17,15 @@ export const authOptions = {
     ],
     secret: process.env.JWT_SECRET,
     callbacks: {
-        async session(params: { session: Session; token: JWT; }) {
+         async session(params: { session: Session; token: JWT; }) {
             const { session } = params;
             let user = await prismaClient.user.findFirst({
                 where: {
                     email: session.user?.email
                 }
             });
-            if (!user) {
 
+            if (!user) {
                 user = await prismaClient.user.create({
                     data: {
                         email: session.user?.email,
@@ -33,10 +33,16 @@ export const authOptions = {
                         name: session.user?.name,
                     }
                 });
-                if (!user)
-                    Promise.reject(session);
+
+                if (!user) {
+                    return Promise.reject(session);
+                }
             }
-            return Promise.resolve({ ...session, user });
+
+            const isAdmin = session.user?.email === process.env.SUPERUSER_EMAIL;
+            const updatedUser = { ...user, isAdmin };
+
+            return Promise.resolve({ ...session, user: updatedUser });
         },
 
     },
