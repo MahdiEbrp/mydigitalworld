@@ -1,0 +1,85 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider          = "postgresql"
+  url               = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  directUrl         = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+  shadowDatabaseUrl = env("POSTGRES_URL_NON_POOLING") // used for migrations
+}
+
+model User {
+  id        String     @id @default(cuid())
+  createdAt DateTime   @default(now()) @db.Timestamptz
+  email     String?    @unique
+  image     String?
+  name      String?
+  Topic     Topic[]
+  Feedback  Feedback[]
+  Comment   Comment[]
+}
+
+model Topic {
+  id          String     @id @default(uuid())
+  createdAt   DateTime   @default(now()) @db.Timestamptz
+  description String?    @db.VarChar(255)
+  userId      String
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  Feedback    Feedback[]
+  Gallery     Gallery[]
+  Comment     Comment[]
+  Posts       Posts[]
+}
+
+model Feedback {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  isLike    Boolean?
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  userId    String
+  topic     Topic     @relation(fields: [topicId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  topicId   String
+  Comment   Comment[]
+
+  @@unique([userId, topicId], name: "feedback_userid_topicid_key")
+}
+
+model Comment {
+  id         String    @id @default(uuid())
+  createdAt  DateTime  @default(now()) @db.Timestamptz
+  topicId    String
+  feedbackId String?
+  comment    String    @db.VarChar(400)
+  parentId   String?   @db.VarChar(36)
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  userId     String
+  topic      Topic     @relation(fields: [topicId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  feedback   Feedback? @relation(fields: [feedbackId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  Parent     Comment?  @relation("parentId", fields: [parentId], references: [id], onDelete: Cascade)
+  Subgroups  Comment[] @relation("parentId")
+}
+
+model Gallery {
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now())
+  title       String   @db.VarChar(500)
+  location    String   @db.VarChar(500)
+  src         String   @db.VarChar(500)
+  description String
+  topicId     String
+  altTag      String   @db.VarChar(100)
+  topic       Topic    @relation(fields: [topicId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model Posts {
+  createdAt   DateTime @default(now())
+  title       String   @db.VarChar(500)
+  fileName    String   @id @db.VarChar(500)
+  description String   @db.VarChar(500)
+  thumbnail   String   @db.VarChar(500)
+  isVisible   Boolean
+  keywords    String   @db.VarChar(500)
+  topicId     String
+  topic       Topic    @relation(fields: [topicId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
