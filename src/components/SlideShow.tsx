@@ -44,11 +44,9 @@ const SlideShow = ({ slides = [] }: { slides: SlideProps[]; }) => {
     }, [nextStep, paused]);
     return (
         <div className='flex flex-col'>
+            <h1 className='text-xl text-primary-950 text-center font-bold mb-4 mt-4 animate-fadeIn'>{slides[activeId].title}</h1>
             {slides.map((slide, index) =>
                 <div key={index} className={`${index === activeId ? 'block' : 'hidden'}`}>
-                    {index === activeId &&
-                        <h1 className='text-xl text-primary-950 text-center font-bold mb-4 mt-4 animate-fadeIn'>{slide.title}</h1>
-                    }
                     <div className='relative inline-block animate-fadeIn'>
                         <ImageLoader
                             src={slide.imageUrl}
