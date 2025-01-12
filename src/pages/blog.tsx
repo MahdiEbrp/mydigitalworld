@@ -18,7 +18,7 @@ type BlogProps = {
 
 const Blog: React.FC<BlogProps> = ({ posts }) => {
   const [keywords, setKeywords] = React.useState<string[]>([]);
-  const inputRef = useRef<HTMLInputElement | null>(null);
+  const inputRef = useRef<HTMLInputElement | undefined>(undefined);
 
   const filteredPosts = keywords.length > 0
     ? posts.filter(post => keywords.some(keyword => post.keywords.toLowerCase().includes(keyword.toLowerCase())))
@@ -67,7 +67,7 @@ const Blog: React.FC<BlogProps> = ({ posts }) => {
               <LabelledComponent label='Filter keyword to categorize data 🔍'>
                 <div className='flex'>
                   <Input
-                    inputRef={inputRef} id='inputValue' name='inputValue'
+                    inputRef={inputRef as React.RefObject<HTMLInputElement>} id='inputValue' name='inputValue'
                     onKeyDown={handleInputKeyDown} maxLength={100}
                     className='overflow-hidden max-w-sm border border-primary-100 rounded'
                   />

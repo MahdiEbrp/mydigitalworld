@@ -5,11 +5,11 @@ type TooltipProps = {
     children: ReactNode;
 } & HTMLAttributes<HTMLDivElement>;
 
-const getDisabledProps = (element: ReactNode) => {
-    if (!isValidElement(element) || !element.props.disabled) {
-        return false;
+const getDisabledProps = (element: ReactNode): boolean => {
+    if (isValidElement<{ disabled?: boolean }>(element)) {
+        return Boolean(element.props.disabled);
     }
-    return Boolean(element.props.disabled);
+    return false;
 };
 
 const Tooltip = ({ text, children, ...rest }: TooltipProps) => {

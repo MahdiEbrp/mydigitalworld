@@ -10,7 +10,7 @@ import getMarkdownSlugs, { getPostContentBySlug } from '@/lib/fileHelper';
 import prismaClient from '@/lib/prismaClient';
 import { BiArrowBack, BiArrowToBottom, BiArrowToTop, BiComment } from 'react-icons/bi';
 import { GetStaticPaths, GetStaticProps } from 'next';
-import { Post } from '@/type/posts';
+import {type Post } from '@/type/posts';
 import { useCommentModal } from '@/context/CommentContext';
 import { useTheme } from '@/context/Theme';
 

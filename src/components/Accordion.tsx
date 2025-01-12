@@ -33,7 +33,7 @@ const AccordionSection = ({ title, children, borderRadius = 'rounded-none' }: Re
 };
 
 type AccordionProps = {
-    children: ReactElement | ReactElement[];
+    children: ReactElement<AccordionSectionProps> | ReactElement<AccordionSectionProps>[];
 };
 
 const Accordion = ({ children }: AccordionProps) => {
