@@ -12,7 +12,7 @@ type SlideProps = {
 };
 const SLIDE_SPEED_MS = 20 * 1000;
 
-const SlideShow = ({ slides = [] }: { slides: SlideProps[]; }) => {
+const Carousel = ({ slides = [] }: { slides: SlideProps[]; }) => {
     const [activeId, setActiveId] = useState(0);
     const [paused, setPaused] = useState(false);
     const MAX_STEP = slides.length;
@@ -82,4 +82,4 @@ const SlideShow = ({ slides = [] }: { slides: SlideProps[]; }) => {
     );
 };
 
-export default SlideShow;
+export default Carousel;
